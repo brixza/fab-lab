@@ -1,14 +1,16 @@
 'use client'
 
-import { useState } from 'react'
+import { use, useState } from 'react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
-export default function RegisterForm() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const claimToken = searchParams.get('token')
+export default function RegisterForm({
+  searchParams,
+}: {
+  searchParams: Promise<{ token?: string }>
+}) {
+  const params = use(searchParams)
+  const claimToken = params.token ?? null
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
