@@ -1,26 +1,49 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-primary:     #2c3e50;
+  --color-bg:          #f7f5f2;
+  --color-card:        #ffffff;
+  --color-border:      #e0ddd8;
+  --color-points:      #8a6d1a;
+  --color-bronze:      #9c6d3e;
+  --color-silver:      #5a6472;
+  --color-gold:        #8a6d1a;
+  --color-text:        #2c3e50;
+  --color-text-muted:  #6b6b6b;
+
+  --font-serif: Georgia, 'Times New Roman', serif;
+
+  --border: 0.5px solid var(--color-border);
+  --radius: 0;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-serif);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Reset button/input border-radius to match brand */
+button, input, select, textarea {
+  border-radius: 0;
+  font-family: var(--font-serif);
+}
+
+.label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
 }
