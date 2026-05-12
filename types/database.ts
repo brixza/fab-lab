@@ -31,6 +31,7 @@ export interface PurchaseItem {
   brand: string
   quantity: number
   unit_price: number
+  image_url: string | null
   created_at: string
 }
 
