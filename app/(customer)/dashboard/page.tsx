@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { TIER_COLORS, TIER_LABELS, tierProgress } from '@/lib/tier'
 import type { Customer, Purchase, PurchaseItem, Tier } from '@/types/database'
@@ -124,34 +125,64 @@ export default async function DashboardPage() {
             {recentPurchases.map((purchase) => {
               const items = purchase.purchase_items ?? []
               const firstItem = items[0]
+              const extraCount = items.length - 1
               return (
                 <div key={purchase.id} style={{
                   background: 'var(--color-card)',
                   border: 'var(--border)',
                   padding: '16px',
                   display: 'flex',
-                  justifyContent: 'space-between',
+                  gap: 14,
                   alignItems: 'flex-start',
-                  gap: 12,
                 }}>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 13, color: 'var(--color-primary)', margin: '0 0 4px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {firstItem ? firstItem.product_name : 'Purchase'}
-                      {items.length > 1 && (
-                        <span style={{ color: 'var(--color-text-muted)', fontSize: 11 }}> +{items.length - 1} more</span>
-                      )}
-                    </p>
-                    <p className="label" style={{ margin: 0 }}>
-                      {new Date(purchase.created_at).toLocaleDateString('sv-SE')} · {purchase.source}
-                    </p>
+                  {/* Image */}
+                  <div style={{
+                    width: 56,
+                    height: 68,
+                    flexShrink: 0,
+                    background: '#f0ede8',
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}>
+                    {firstItem?.image_url ? (
+                      <Image
+                        src={firstItem.image_url}
+                        alt={firstItem.product_name}
+                        fill
+                        style={{ objectFit: 'cover' }}
+                        sizes="56px"
+                      />
+                    ) : null}
                   </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <p style={{ fontSize: 13, color: 'var(--color-primary)', margin: '0 0 2px' }}>
-                      {purchase.total_amount.toLocaleString()} kr
-                    </p>
-                    <p style={{ fontSize: 10, color: 'var(--color-points)', letterSpacing: '0.08em' }}>
-                      +{purchase.points_awarded} pts
-                    </p>
+
+                  {/* Text */}
+                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 68 }}>
+                    <div>
+                      {firstItem && (
+                        <p className="label" style={{ margin: '0 0 2px', color: 'var(--color-text-muted)' }}>
+                          {firstItem.brand}
+                        </p>
+                      )}
+                      <p style={{ fontSize: 13, color: 'var(--color-primary)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {firstItem ? firstItem.product_name : 'Purchase'}
+                        {extraCount > 0 && (
+                          <span style={{ color: 'var(--color-text-muted)', fontSize: 11 }}> +{extraCount} more</span>
+                        )}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                      <p className="label" style={{ margin: 0 }}>
+                        {new Date(purchase.created_at).toLocaleDateString('sv-SE')}
+                      </p>
+                      <div style={{ textAlign: 'right' }}>
+                        <p style={{ fontSize: 13, color: 'var(--color-primary)', margin: '0 0 1px' }}>
+                          {purchase.total_amount.toLocaleString('sv-SE')} kr
+                        </p>
+                        <p style={{ fontSize: 10, color: 'var(--color-points)', letterSpacing: '0.08em', margin: 0 }}>
+                          +{purchase.points_awarded.toLocaleString()} pts
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )
