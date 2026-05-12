@@ -28,7 +28,8 @@ export async function proxy(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/reset-password')
 
   const isPublicRoute = request.nextUrl.pathname.startsWith('/claim') ||
-    request.nextUrl.pathname.startsWith('/api/')
+    request.nextUrl.pathname.startsWith('/api/') ||
+    request.nextUrl.pathname.startsWith('/staff')
 
   if (!user && !isAuthRoute && !isPublicRoute) {
     const url = request.nextUrl.clone()
