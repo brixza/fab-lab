@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
-import { TIER_COLORS, TIER_LABELS, tierProgress } from '@/lib/tier'
+import { TIER_COLORS, TIER_LABELS, TIERS, TIER_THRESHOLDS, tierProgress, nextTier } from '@/lib/tier'
 import type { Customer, Purchase, PurchaseItem, Tier } from '@/types/database'
 
 export default async function DashboardPage() {
@@ -34,8 +34,8 @@ export default async function DashboardPage() {
 
   const tier = customer.tier as Tier
   const tierColor = TIER_COLORS[tier]
-  const tierLabel = TIER_LABELS[tier]
   const { pct, label: progressLabel } = tierProgress(customer.points_balance, tier)
+  const next = nextTier(tier)
   const firstName = customer.name.split(' ')[0]
 
   return (
@@ -55,15 +55,16 @@ export default async function DashboardPage() {
         padding: '24px',
         display: 'flex',
         flexDirection: 'column',
-        gap: 16,
+        gap: 20,
       }}>
+        {/* Balance + current tier */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
-            <p style={{ fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', margin: 0 }}>
+            <p style={{ fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', margin: 0 }}>
               Points balance
             </p>
             <p style={{ fontSize: 36, color: '#fff', margin: '4px 0 0', letterSpacing: '-0.01em' }}>
-              {customer.points_balance.toLocaleString()}
+              {customer.points_balance.toLocaleString('sv-SE')}
             </p>
           </div>
           <div style={{
@@ -74,30 +75,80 @@ export default async function DashboardPage() {
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
           }}>
-            {tierLabel}
+            {TIER_LABELS[tier]}
           </div>
         </div>
 
         {/* Progress bar */}
         <div>
-          <div style={{
-            height: 1,
-            background: 'rgba(255,255,255,0.15)',
-            position: 'relative',
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              height: '100%',
-              width: `${pct}%`,
-              background: tierColor,
-              transition: 'width 0.6s ease',
-            }} />
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', margin: 0, letterSpacing: '0.08em' }}>
+              {progressLabel}
+            </p>
+            {next && (
+              <span style={{ fontSize: 10, letterSpacing: '0.1em', color: TIER_COLORS[next], textTransform: 'uppercase' }}>
+                {TIER_LABELS[next]}
+              </span>
+            )}
           </div>
-          <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginTop: 8, letterSpacing: '0.08em' }}>
-            {progressLabel}
-          </p>
+          <div style={{ height: 2, background: 'rgba(255,255,255,0.1)', position: 'relative' }}>
+            <div style={{
+              position: 'absolute', top: 0, left: 0, height: '100%',
+              width: `${pct}%`, background: tierColor, transition: 'width 0.6s ease',
+            }} />
+            {next && (
+              <div style={{
+                position: 'absolute', top: -3, right: 0,
+                width: 8, height: 8, borderRadius: '50%',
+                background: TIER_COLORS[next], opacity: 0.5,
+              }} />
+            )}
+          </div>
+        </div>
+
+        {/* Tier journey */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginTop: 4 }}>
+          {TIERS.map((t, i) => {
+            const isReached = TIERS.indexOf(tier) >= i
+            const isCurrent = t === tier
+            const color = TIER_COLORS[t]
+            return (
+              <div key={t} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <div style={{
+                    width: isCurrent ? 10 : 7,
+                    height: isCurrent ? 10 : 7,
+                    borderRadius: '50%',
+                    background: isReached ? color : 'transparent',
+                    border: `1px solid ${isReached ? color : 'rgba(255,255,255,0.2)'}`,
+                    transition: 'all 0.3s',
+                  }} />
+                  <span style={{
+                    fontSize: 8,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: isReached ? color : 'rgba(255,255,255,0.2)',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {TIER_LABELS[t]}
+                  </span>
+                  {t !== 'bronze' && (
+                    <span style={{ fontSize: 7, color: 'rgba(255,255,255,0.2)', letterSpacing: '0.04em' }}>
+                      {TIER_THRESHOLDS[t].toLocaleString()}
+                    </span>
+                  )}
+                </div>
+                {i < TIERS.length - 1 && (
+                  <div style={{
+                    flex: 1,
+                    height: 1,
+                    marginBottom: 28,
+                    background: isReached && t !== tier ? color : 'rgba(255,255,255,0.1)',
+                  }} />
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
 

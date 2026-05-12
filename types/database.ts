@@ -1,4 +1,4 @@
-export type Tier = 'bronze' | 'silver' | 'gold'
+export type Tier = 'bronze' | 'silver' | 'gold' | 'platinum'
 export type PurchaseSource = 'shopify' | 'zettle' | 'manual'
 
 export interface Customer {

@@ -1,25 +1,42 @@
 import type { Tier } from '@/types/database'
 
-export const TIER_THRESHOLDS = { silver: 2000, gold: 8000 }
+export const TIERS: Tier[] = ['bronze', 'silver', 'gold', 'platinum']
+
+export const TIER_THRESHOLDS: Record<Tier, number> = {
+  bronze:   0,
+  silver:   5000,
+  gold:     15000,
+  platinum: 35000,
+}
 
 export const TIER_COLORS: Record<Tier, string> = {
-  bronze: '#9c6d3e',
-  silver: '#5a6472',
-  gold:   '#8a6d1a',
+  bronze:   '#9c6d3e',
+  silver:   '#5a6472',
+  gold:     '#8a6d1a',
+  platinum: '#6b7fa3',
 }
 
 export const TIER_LABELS: Record<Tier, string> = {
-  bronze: 'Bronze',
-  silver: 'Silver',
-  gold:   'Gold',
+  bronze:   'Bronze',
+  silver:   'Silver',
+  gold:     'Gold',
+  platinum: 'Platinum',
+}
+
+export function nextTier(tier: Tier): Tier | null {
+  const idx = TIERS.indexOf(tier)
+  return idx < TIERS.length - 1 ? TIERS[idx + 1] : null
 }
 
 export function tierProgress(points: number, tier: Tier): { pct: number; label: string } {
-  if (tier === 'gold') return { pct: 100, label: 'Maximum tier reached' }
-  if (tier === 'silver') {
-    const pct = Math.min(((points - 2000) / 6000) * 100, 100)
-    return { pct, label: `${(8000 - points).toLocaleString()} pts to Gold` }
+  const next = nextTier(tier)
+  if (!next) return { pct: 100, label: 'Maximum tier reached' }
+
+  const from = TIER_THRESHOLDS[tier]
+  const to   = TIER_THRESHOLDS[next]
+  const pct  = Math.min(((points - from) / (to - from)) * 100, 100)
+  return {
+    pct,
+    label: `${(to - points).toLocaleString()} pts to ${TIER_LABELS[next]}`,
   }
-  const pct = Math.min((points / 2000) * 100, 100)
-  return { pct, label: `${(2000 - points).toLocaleString()} pts to Silver` }
 }
