@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: 'fab-lab.nu',
         pathname: '/cdn/shop/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'boiwhcigijetmkesedhu.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
     ],
   },
 };

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { TIER_COLORS, TIER_LABELS, TIERS, TIER_THRESHOLDS, tierProgress, nextTier } from '@/lib/tier'
+import AvatarUpload from '@/components/AvatarUpload'
 import type { Customer, Purchase, PurchaseItem, Tier } from '@/types/database'
 
 export default async function DashboardPage() {
@@ -42,11 +43,19 @@ export default async function DashboardPage() {
     <div style={{ padding: '32px 20px', display: 'flex', flexDirection: 'column', gap: 28 }}>
 
       {/* Header */}
-      <div>
-        <p className="label" style={{ marginBottom: 4 }}>Welcome back</p>
-        <h1 style={{ fontSize: 22, fontWeight: 'normal', color: 'var(--color-primary)', margin: 0 }}>
-          {firstName}
-        </h1>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <AvatarUpload
+          userId={user.id}
+          customerId={customer.id}
+          avatarUrl={customer.avatar_url}
+          name={customer.name}
+        />
+        <div>
+          <p className="label" style={{ marginBottom: 4 }}>Welcome back</p>
+          <h1 style={{ fontSize: 22, fontWeight: 'normal', color: 'var(--color-primary)', margin: 0 }}>
+            {firstName}
+          </h1>
+        </div>
       </div>
 
       {/* Points card */}

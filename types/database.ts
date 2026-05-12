@@ -9,6 +9,7 @@ export interface Customer {
   member_id: string
   points_balance: number
   tier: Tier
+  avatar_url: string | null
   created_at: string
 }
 
