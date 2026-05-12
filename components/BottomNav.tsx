@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 const tabs = [
   { href: '/dashboard', label: 'Home',     icon: HomeIcon },
   { href: '/purchases', label: 'Purchases', icon: ReceiptIcon },
+  { href: '/profile',   label: 'Profile',   icon: ProfileIcon },
   { href: '/rewards',   label: 'Rewards',   icon: GiftIcon },
   { href: '/card',      label: 'My Card',   icon: CardIcon },
 ]
@@ -39,13 +40,13 @@ export default function BottomNav() {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 4,
+              gap: 3,
               textDecoration: 'none',
               color: active ? 'var(--color-primary)' : 'var(--color-text-muted)',
             }}
           >
-            <Icon size={20} active={active} />
-            <span style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            <Icon size={18} active={active} />
+            <span style={{ fontSize: 8, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               {label}
             </span>
           </Link>
@@ -73,6 +74,15 @@ function ReceiptIcon({ size, active }: { size: number; active: boolean }) {
       <polyline points="14 2 14 8 20 8" />
       <line x1="16" y1="13" x2="8" y2="13" />
       <line x1="16" y1="17" x2="8" y2="17" />
+    </svg>
+  )
+}
+
+function ProfileIcon({ size, active }: { size: number; active: boolean }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth={active ? 1.8 : 1.4} strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
     </svg>
   )
 }
