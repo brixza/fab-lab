@@ -8,7 +8,6 @@ const tabs = [
   { href: '/purchases', label: 'Purchases', icon: ReceiptIcon },
   { href: '/profile',   label: 'Profile',   icon: ProfileIcon },
   { href: '/rewards',   label: 'Rewards',   icon: GiftIcon },
-  { href: '/card',      label: 'My Card',   icon: CardIcon },
 ]
 
 export default function BottomNav() {
@@ -45,8 +44,8 @@ export default function BottomNav() {
               color: active ? 'var(--color-primary)' : 'var(--color-text-muted)',
             }}
           >
-            <Icon size={18} active={active} />
-            <span style={{ fontSize: 8, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            <Icon size={20} active={active} />
+            <span style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               {label}
             </span>
           </Link>
@@ -100,12 +99,3 @@ function GiftIcon({ size, active }: { size: number; active: boolean }) {
   )
 }
 
-function CardIcon({ size, active }: { size: number; active: boolean }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth={active ? 1.8 : 1.4} strokeLinecap="round" strokeLinejoin="round">
-      <rect x="1" y="4" width="22" height="16" rx="0" ry="0" />
-      <line x1="1" y1="10" x2="23" y2="10" />
-    </svg>
-  )
-}
