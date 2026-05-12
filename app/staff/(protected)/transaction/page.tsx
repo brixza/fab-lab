@@ -1,53 +1,58 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import QRCode from 'react-qr-code'
+import ProductPicker from '@/components/ProductPicker'
+import type { Product } from '@/types/database'
 
-interface LineItem {
-  product_name: string
-  brand: string
-  sku: string
+interface CartItem {
+  product: Product
   quantity: number
-  unit_price: number
 }
 
-const emptyItem = (): LineItem => ({
-  product_name: '',
-  brand: '',
-  sku: '',
-  quantity: 1,
-  unit_price: 0,
-})
-
 export default function TransactionPage() {
-  const [items, setItems] = useState<LineItem[]>([emptyItem()])
+  const [cart, setCart] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(false)
   const [claimToken, setClaimToken] = useState<string | null>(null)
   const [expiresAt, setExpiresAt] = useState<string | null>(null)
 
-  const total = items.reduce((sum, i) => sum + i.quantity * i.unit_price, 0)
+  const total = cart.reduce((sum, i) => sum + i.quantity * i.product.unit_price, 0)
 
-  function updateItem(index: number, field: keyof LineItem, value: string | number) {
-    setItems(prev => prev.map((item, i) =>
-      i === index ? { ...item, [field]: value } : item
-    ))
+  function addProduct(product: Product) {
+    setCart(prev => {
+      const existing = prev.find(i => i.product.sku === product.sku)
+      if (existing) {
+        return prev.map(i => i.product.sku === product.sku ? { ...i, quantity: i.quantity + 1 } : i)
+      }
+      return [...prev, { product, quantity: 1 }]
+    })
   }
 
-  function addItem() { setItems(prev => [...prev, emptyItem()]) }
-
-  function removeItem(index: number) {
-    setItems(prev => prev.filter((_, i) => i !== index))
+  function setQuantity(sku: string, quantity: number) {
+    if (quantity < 1) {
+      setCart(prev => prev.filter(i => i.product.sku !== sku))
+    } else {
+      setCart(prev => prev.map(i => i.product.sku === sku ? { ...i, quantity } : i))
+    }
   }
 
   async function generateQR() {
-    if (!items.some(i => i.product_name && i.unit_price > 0)) return
+    if (cart.length === 0) return
     setLoading(true)
 
     const res = await fetch('/api/staff/claim-token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        line_items: items.filter(i => i.product_name),
+        line_items: cart.map(i => ({
+          sku: i.product.sku,
+          product_name: i.product.product_name,
+          brand: i.product.brand,
+          quantity: i.quantity,
+          unit_price: i.product.unit_price,
+          image_url: i.product.image_url,
+        })),
         total_amount: total,
         zettle_transaction_id: '',
       }),
@@ -65,7 +70,7 @@ export default function TransactionPage() {
     ? `${typeof window !== 'undefined' ? window.location.origin : ''}/claim?token=${claimToken}`
     : null
 
-  // QR display screen
+  // QR display — fullscreen dark
   if (claimToken && claimUrl) {
     const expiresIn = expiresAt
       ? Math.max(0, Math.round((new Date(expiresAt).getTime() - Date.now()) / 60000))
@@ -78,15 +83,15 @@ export default function TransactionPage() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 32,
         gap: 32,
+        padding: 32,
         background: 'var(--color-primary)',
       }}>
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', margin: '0 0 6px' }}>
+          <p style={{ fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', margin: '0 0 8px' }}>
             fab-lab
           </p>
-          <p style={{ fontSize: 15, color: '#fff', margin: 0, fontWeight: 'normal' }}>
+          <p style={{ fontSize: 16, color: '#fff', margin: 0, fontWeight: 'normal' }}>
             Scan to earn your points
           </p>
         </div>
@@ -96,21 +101,21 @@ export default function TransactionPage() {
         </div>
 
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: 28, color: '#fff', margin: '0 0 6px', letterSpacing: '-0.01em' }}>
+          <p style={{ fontSize: 32, color: '#fff', margin: '0 0 6px', letterSpacing: '-0.01em' }}>
             {total.toLocaleString('sv-SE')} kr
           </p>
-          <p style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', margin: 0 }}>
+          <p style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', margin: 0 }}>
             Expires in {expiresIn} min
           </p>
         </div>
 
         <button
-          onClick={() => { setClaimToken(null); setItems([emptyItem()]) }}
+          onClick={() => { setClaimToken(null); setCart([]) }}
           style={{
             background: 'none',
-            border: '0.5px solid rgba(255,255,255,0.3)',
-            color: 'rgba(255,255,255,0.6)',
-            padding: '10px 24px',
+            border: '0.5px solid rgba(255,255,255,0.25)',
+            color: 'rgba(255,255,255,0.55)',
+            padding: '10px 28px',
             fontSize: 10,
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
@@ -124,9 +129,10 @@ export default function TransactionPage() {
     )
   }
 
-  // Product entry screen
+  // Product picker screen
   return (
-    <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 24, minHeight: '100dvh' }}>
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1 style={{ fontSize: 18, fontWeight: 'normal', color: 'var(--color-primary)', margin: 0 }}>
           New Transaction
@@ -136,87 +142,81 @@ export default function TransactionPage() {
         </a>
       </div>
 
-      {/* Line items */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {items.map((item, index) => (
-          <div key={index} style={{
-            background: 'var(--color-card)',
-            border: 'var(--border)',
-            padding: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 10,
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span className="label">Item {index + 1}</span>
-              {items.length > 1 && (
-                <button onClick={() => removeItem(index)} style={ghostButtonStyle}>Remove</button>
-              )}
-            </div>
-
-            <input
-              placeholder="Product name"
-              value={item.product_name}
-              onChange={e => updateItem(index, 'product_name', e.target.value)}
-              style={inputStyle}
-            />
-            <input
-              placeholder="Brand"
-              value={item.brand}
-              onChange={e => updateItem(index, 'brand', e.target.value)}
-              style={inputStyle}
-            />
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-              <input
-                placeholder="SKU"
-                value={item.sku}
-                onChange={e => updateItem(index, 'sku', e.target.value)}
-                style={inputStyle}
-              />
-              <input
-                type="number"
-                placeholder="Qty"
-                min={1}
-                value={item.quantity}
-                onChange={e => updateItem(index, 'quantity', parseInt(e.target.value) || 1)}
-                style={inputStyle}
-              />
-              <input
-                type="number"
-                placeholder="Price (kr)"
-                min={0}
-                value={item.unit_price || ''}
-                onChange={e => updateItem(index, 'unit_price', parseInt(e.target.value) || 0)}
-                style={inputStyle}
-              />
-            </div>
-          </div>
-        ))}
+      {/* Product search */}
+      <div>
+        <p className="label" style={{ marginBottom: 10 }}>Add products</p>
+        <ProductPicker onSelect={addProduct} />
       </div>
 
-      <button onClick={addItem} style={ghostButtonStyle}>+ Add item</button>
+      {/* Cart */}
+      {cart.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          {cart.map(({ product, quantity }) => (
+            <div key={product.sku} style={{
+              background: 'var(--color-card)',
+              border: 'var(--border)',
+              padding: '12px 16px',
+              display: 'flex',
+              gap: 12,
+              alignItems: 'center',
+            }}>
+              {product.image_url && (
+                <div style={{ width: 40, height: 48, flexShrink: 0, position: 'relative', background: '#f0ede8' }}>
+                  <Image src={product.image_url} alt={product.product_name} fill style={{ objectFit: 'cover' }} sizes="40px" />
+                </div>
+              )}
+
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p className="label" style={{ margin: '0 0 1px', color: 'var(--color-text-muted)' }}>{product.brand}</p>
+                <p style={{ fontSize: 13, color: 'var(--color-primary)', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {product.product_name}
+                </p>
+              </div>
+
+              {/* Quantity stepper */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+                <button onClick={() => setQuantity(product.sku, quantity - 1)} style={stepperBtn}>−</button>
+                <span style={{ fontSize: 14, color: 'var(--color-primary)', minWidth: 16, textAlign: 'center' }}>{quantity}</span>
+                <button onClick={() => setQuantity(product.sku, quantity + 1)} style={stepperBtn}>+</button>
+              </div>
+
+              <p style={{ fontSize: 13, color: 'var(--color-primary)', flexShrink: 0, minWidth: 72, textAlign: 'right', margin: 0 }}>
+                {(quantity * product.unit_price).toLocaleString('sv-SE')} kr
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {cart.length === 0 && (
+        <div style={{ padding: '32px', border: 'var(--border)', textAlign: 'center', background: 'var(--color-card)' }}>
+          <p style={{ fontSize: 12, color: 'var(--color-text-muted)', margin: 0 }}>
+            Search for a product above to add it to the transaction.
+          </p>
+        </div>
+      )}
 
       {/* Total + generate */}
-      <div style={{ borderTop: 'var(--border)', paddingTop: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div style={{ marginTop: 'auto', borderTop: 'var(--border)', paddingTop: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
           <span className="label">Total</span>
-          <span style={{ fontSize: 22, color: 'var(--color-primary)' }}>
+          <span style={{ fontSize: 26, color: 'var(--color-primary)', letterSpacing: '-0.01em' }}>
             {total.toLocaleString('sv-SE')} kr
           </span>
         </div>
 
         <button
           onClick={generateQR}
-          disabled={loading || total === 0}
+          disabled={loading || cart.length === 0}
           style={{
             padding: '16px',
-            background: total > 0 ? 'var(--color-primary)' : '#ccc',
+            background: cart.length > 0 ? 'var(--color-primary)' : '#ccc',
             color: '#fff',
             border: 'none',
             fontSize: 11,
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            cursor: total > 0 ? 'pointer' : 'not-allowed',
+            cursor: cart.length > 0 ? 'pointer' : 'not-allowed',
             fontFamily: 'inherit',
           }}
         >
@@ -227,26 +227,17 @@ export default function TransactionPage() {
   )
 }
 
-const inputStyle: React.CSSProperties = {
-  padding: '10px 12px',
-  border: '0.5px solid var(--color-border)',
-  background: 'var(--color-bg)',
-  fontSize: 13,
-  fontFamily: 'inherit',
-  color: 'var(--color-text)',
-  outline: 'none',
-  width: '100%',
-}
-
-const ghostButtonStyle: React.CSSProperties = {
+const stepperBtn: React.CSSProperties = {
+  width: 28,
+  height: 28,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   background: 'none',
   border: 'var(--border)',
-  padding: '8px 16px',
-  fontSize: 10,
-  letterSpacing: '0.1em',
-  textTransform: 'uppercase',
   cursor: 'pointer',
+  fontSize: 16,
   fontFamily: 'inherit',
-  color: 'var(--color-text-muted)',
-  alignSelf: 'flex-start',
+  color: 'var(--color-primary)',
+  flexShrink: 0,
 }

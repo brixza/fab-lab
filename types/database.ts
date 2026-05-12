@@ -55,6 +55,17 @@ export interface LineItem {
   unit_price: number
 }
 
+export interface Product {
+  id: string
+  sku: string
+  product_name: string
+  brand: string
+  unit_price: number
+  image_url: string | null
+  active: boolean
+  created_at: string
+}
+
 export interface UnclaimedShopifyOrder {
   id: string
   email: string
