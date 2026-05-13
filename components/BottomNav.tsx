@@ -1,13 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 const tabs = [
-  { href: '/dashboard', label: 'Home',     icon: HomeIcon },
-  { href: '/purchases', label: 'Purchases', icon: ReceiptIcon },
-  { href: '/news',      label: 'News',      icon: NewsIcon },
-  { href: '/profile',   label: 'Profile',   icon: ProfileIcon },
+  { href: '/dashboard', label: 'Home',      icon: '/icons/home.png' },
+  { href: '/purchases', label: 'Purchases', icon: '/icons/purchases.png' },
+  { href: '/news',      label: 'News',      icon: '/icons/news.png' },
+  { href: '/profile',   label: 'Profile',   icon: '/icons/profile.png' },
 ]
 
 export default function BottomNav() {
@@ -27,7 +28,7 @@ export default function BottomNav() {
       height: 64,
       zIndex: 50,
     }}>
-      {tabs.map(({ href, label, icon: Icon }) => {
+      {tabs.map(({ href, label, icon }) => {
         const active = pathname === href
         return (
           <Link
@@ -39,12 +40,18 @@ export default function BottomNav() {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: 3,
+              gap: 4,
               textDecoration: 'none',
               color: active ? 'var(--color-primary)' : 'var(--color-text-muted)',
             }}
           >
-            <Icon size={20} active={active} />
+            <Image
+              src={icon}
+              alt={label}
+              width={22}
+              height={22}
+              style={{ opacity: active ? 1 : 0.4 }}
+            />
             <span style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               {label}
             </span>
@@ -54,60 +61,3 @@ export default function BottomNav() {
     </nav>
   )
 }
-
-function HomeIcon({ size, active }: { size: number; active: boolean }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth={active ? 1.8 : 1.4} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      <polyline points="9 22 9 12 15 12 15 22" />
-    </svg>
-  )
-}
-
-function ReceiptIcon({ size, active }: { size: number; active: boolean }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth={active ? 1.8 : 1.4} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-      <polyline points="14 2 14 8 20 8" />
-      <line x1="16" y1="13" x2="8" y2="13" />
-      <line x1="16" y1="17" x2="8" y2="17" />
-    </svg>
-  )
-}
-
-function ProfileIcon({ size, active }: { size: number; active: boolean }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth={active ? 1.8 : 1.4} strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  )
-}
-
-function NewsIcon({ size, active }: { size: number; active: boolean }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth={active ? 1.8 : 1.4} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
-      <line x1="12" y1="8" x2="18" y2="8" />
-      <line x1="12" y1="12" x2="18" y2="12" />
-      <line x1="12" y1="16" x2="18" y2="16" />
-    </svg>
-  )
-}
-
-function GiftIcon({ size, active }: { size: number; active: boolean }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      strokeWidth={active ? 1.8 : 1.4} strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="20 12 20 22 4 22 4 12" />
-      <rect x="2" y="7" width="20" height="5" />
-      <line x1="12" y1="22" x2="12" y2="7" />
-      <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" />
-      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" />
-    </svg>
-  )
-}
-
