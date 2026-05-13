@@ -10,6 +10,18 @@ export interface Customer {
   points_balance: number
   tier: Tier
   avatar_url: string | null
+  public_token: string
+  created_at: string
+}
+
+export interface WishlistItem {
+  id: string
+  customer_id: string
+  sku: string
+  product_name: string
+  brand: string
+  unit_price: number
+  image_url: string | null
   created_at: string
 }
 
