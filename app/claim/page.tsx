@@ -21,7 +21,8 @@ function ClaimContent() {
       const { data: { user } } = await supabase.auth.getUser()
 
       if (!user) {
-        // Not logged in — send to register with token preserved
+        // Save token to sessionStorage so it survives the register → email confirm → dashboard redirect
+        sessionStorage.setItem('pending_claim_token', token!)
         router.push(`/register?token=${token}`)
         return
       }

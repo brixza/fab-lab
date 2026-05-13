@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   }
 
   const token = `tx_${crypto.randomUUID().replace(/-/g, '').slice(0, 12)}`
-  const expires_at = new Date(Date.now() + 15 * 60 * 1000).toISOString()
+  const expires_at = new Date(Date.now() + 60 * 60 * 1000).toISOString()
 
   const service = createServiceClient()
   const { data, error } = await service
