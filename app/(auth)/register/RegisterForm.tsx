@@ -2,6 +2,7 @@
 
 import { use, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 export default function RegisterForm({
@@ -12,12 +13,12 @@ export default function RegisterForm({
   const params = use(searchParams)
   const claimToken = params.token ?? null
 
+  const router = useRouter()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [done, setDone] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -43,19 +44,9 @@ export default function RegisterForm({
       return
     }
 
-    setDone(true)
-  }
-
-  if (done) {
-    return (
-      <div style={{ textAlign: 'center' }}>
-        <p style={{ fontSize: 15, color: 'var(--color-primary)', marginBottom: 12 }}>Check your email</p>
-        <p style={{ fontSize: 13, color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
-          We sent a confirmation link to <strong>{email}</strong>.
-          Click it to activate your membership.
-        </p>
-      </div>
-    )
+    if (claimToken) sessionStorage.setItem('pending_claim_token', claimToken)
+    router.push('/dashboard')
+    router.refresh()
   }
 
   return (
