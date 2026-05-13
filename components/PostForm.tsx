@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { staffUpload } from '@/lib/staff-upload'
+import ImageCropModal from './ImageCropModal'
 import type { Post } from '@/types/database'
 
 interface Props {
@@ -24,25 +25,50 @@ export default function PostForm({ initial }: Props) {
   const [saving, setSaving] = useState(false)
   const [done, setDone] = useState(false)
 
+  // Crop modal state
+  const [cropFile, setCropFile] = useState<File | null>(null)
+  const [cropTarget, setCropTarget] = useState<'author' | 'post' | null>(null)
+
   const authorInputRef = useRef<HTMLInputElement>(null)
   const postInputRef = useRef<HTMLInputElement>(null)
 
-  async function handleAuthorImage(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleAuthorImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    setUploadingAuthor(true)
-    const url = await staffUpload(file, 'post-images', `authors/${Date.now()}_${file.name}`)
-    setAuthorImageUrl(url)
-    setUploadingAuthor(false)
+    setCropFile(file)
+    setCropTarget('author')
+    e.target.value = ''
   }
 
-  async function handlePostImage(e: React.ChangeEvent<HTMLInputElement>) {
+  function handlePostImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    setUploadingPost(true)
-    const url = await staffUpload(file, 'post-images', `posts/${Date.now()}_${file.name}`)
-    setImageUrl(url)
-    setUploadingPost(false)
+    setCropFile(file)
+    setCropTarget('post')
+    e.target.value = ''
+  }
+
+  async function handleCropConfirm(blob: Blob) {
+    const file = new File([blob], `${cropTarget}_${Date.now()}.jpg`, { type: 'image/jpeg' })
+    setCropFile(null)
+
+    if (cropTarget === 'author') {
+      setUploadingAuthor(true)
+      const url = await staffUpload(file, 'post-images', `authors/${Date.now()}.jpg`)
+      setAuthorImageUrl(url)
+      setUploadingAuthor(false)
+    } else {
+      setUploadingPost(true)
+      const url = await staffUpload(file, 'post-images', `posts/${Date.now()}.jpg`)
+      setImageUrl(url)
+      setUploadingPost(false)
+    }
+    setCropTarget(null)
+  }
+
+  function handleCropCancel() {
+    setCropFile(null)
+    setCropTarget(null)
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -81,6 +107,15 @@ export default function PostForm({ initial }: Props) {
   }
 
   return (
+    <>
+    {cropFile && cropTarget && (
+      <ImageCropModal
+        file={cropFile}
+        aspect={cropTarget === 'author' ? 1 : 3 / 2}
+        onConfirm={handleCropConfirm}
+        onCancel={handleCropCancel}
+      />
+    )}
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
       {/* Author */}
@@ -102,7 +137,7 @@ export default function PostForm({ initial }: Props) {
           </button>
           <input placeholder="Author name" value={authorName} onChange={e => setAuthorName(e.target.value)} required style={{ ...inputStyle, flex: 1 }} />
         </div>
-        <input ref={authorInputRef} type="file" accept="image/*" onChange={handleAuthorImage} style={{ display: 'none' }} />
+        <input ref={authorInputRef} type="file" accept="image/*" onChange={handleAuthorImageSelect} style={{ display: 'none' }} />
       </div>
 
       {/* Title */}
@@ -134,7 +169,7 @@ export default function PostForm({ initial }: Props) {
             {uploadingPost ? 'Uploading…' : '+ Add image'}
           </button>
         )}
-        <input ref={postInputRef} type="file" accept="image/*" onChange={handlePostImage} style={{ display: 'none' }} />
+        <input ref={postInputRef} type="file" accept="image/*" onChange={handlePostImageSelect} style={{ display: 'none' }} />
       </div>
 
       <button type="submit" disabled={saving || !title.trim() || !content.trim() || !authorName.trim()} style={{
@@ -145,6 +180,7 @@ export default function PostForm({ initial }: Props) {
         {saving ? 'Saving…' : isEdit ? 'Save Changes' : 'Publish Post'}
       </button>
     </form>
+    </>
   )
 }
 
