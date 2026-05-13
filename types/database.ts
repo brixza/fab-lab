@@ -14,6 +14,17 @@ export interface Customer {
   created_at: string
 }
 
+export interface Post {
+  id: string
+  title: string
+  content: string
+  author_name: string
+  author_image_url: string | null
+  image_url: string | null
+  published_at: string
+  created_at: string
+}
+
 export interface WishlistItem {
   id: string
   customer_id: string

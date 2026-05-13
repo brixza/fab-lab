@@ -1,0 +1,216 @@
+'use client'
+
+import { useState, useRef } from 'react'
+import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client'
+
+export default function NewPostPage() {
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
+  const [authorName, setAuthorName] = useState('')
+  const [authorImageUrl, setAuthorImageUrl] = useState<string | null>(null)
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [uploadingAuthor, setUploadingAuthor] = useState(false)
+  const [uploadingPost, setUploadingPost] = useState(false)
+  const [publishing, setPublishing] = useState(false)
+  const [done, setDone] = useState(false)
+
+  const authorInputRef = useRef<HTMLInputElement>(null)
+  const postInputRef = useRef<HTMLInputElement>(null)
+
+  async function uploadImage(file: File, path: string): Promise<string | null> {
+    const supabase = createClient()
+    const { error } = await supabase.storage
+      .from('post-images')
+      .upload(path, file, { upsert: true, contentType: file.type })
+    if (error) return null
+    const { data: { publicUrl } } = supabase.storage.from('post-images').getPublicUrl(path)
+    return publicUrl
+  }
+
+  async function handleAuthorImage(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingAuthor(true)
+    const url = await uploadImage(file, `authors/${Date.now()}_${file.name}`)
+    setAuthorImageUrl(url)
+    setUploadingAuthor(false)
+  }
+
+  async function handlePostImage(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingPost(true)
+    const url = await uploadImage(file, `posts/${Date.now()}_${file.name}`)
+    setImageUrl(url)
+    setUploadingPost(false)
+  }
+
+  async function handlePublish(e: React.FormEvent) {
+    e.preventDefault()
+    if (!title.trim() || !content.trim() || !authorName.trim()) return
+    setPublishing(true)
+
+    const res = await fetch('/api/staff/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, content, author_name: authorName, author_image_url: authorImageUrl, image_url: imageUrl }),
+    })
+
+    if (res.ok) setDone(true)
+    setPublishing(false)
+  }
+
+  if (done) {
+    return (
+      <div style={{ padding: '48px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <p style={{ fontSize: 15, color: 'var(--color-primary)', margin: 0 }}>Post published</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center' }}>
+          <button onClick={() => { setTitle(''); setContent(''); setAuthorImageUrl(null); setImageUrl(''); setDone(false) }} style={ghostBtn}>
+            Write another
+          </button>
+          <a href="/staff" style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-text-muted)', textDecoration: 'none' }}>
+            Back to staff
+          </a>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ fontSize: 18, fontWeight: 'normal', color: 'var(--color-primary)', margin: 0 }}>New Post</h1>
+        <a href="/staff" style={{ fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--color-text-muted)', textDecoration: 'none' }}>
+          Cancel
+        </a>
+      </div>
+
+      <form onSubmit={handlePublish} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+
+        {/* Author */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <p className="label">Author</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <button type="button" onClick={() => authorInputRef.current?.click()} style={{
+              width: 48, height: 48, borderRadius: '50%', border: 'var(--border)',
+              background: 'var(--color-bg)', overflow: 'hidden', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}>
+              {authorImageUrl ? (
+                <Image src={authorImageUrl} alt="Author" width={48} height={48} style={{ objectFit: 'cover' }} />
+              ) : (
+                <span style={{ fontSize: 9, color: 'var(--color-text-muted)', letterSpacing: '0.06em' }}>
+                  {uploadingAuthor ? '…' : 'PHOTO'}
+                </span>
+              )}
+            </button>
+            <input
+              placeholder="Author name"
+              value={authorName}
+              onChange={e => setAuthorName(e.target.value)}
+              required
+              style={{ ...inputStyle, flex: 1 }}
+            />
+          </div>
+          <input ref={authorInputRef} type="file" accept="image/*" onChange={handleAuthorImage} style={{ display: 'none' }} />
+        </div>
+
+        {/* Title */}
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <span className="label">Title</span>
+          <input
+            placeholder="Post title"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            required
+            style={inputStyle}
+          />
+        </label>
+
+        {/* Content */}
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <span className="label">Content</span>
+          <textarea
+            placeholder="Write your post…"
+            value={content}
+            onChange={e => setContent(e.target.value)}
+            required
+            rows={8}
+            style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.7 }}
+          />
+        </label>
+
+        {/* Post image */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <p className="label">Image (optional)</p>
+          {imageUrl ? (
+            <div style={{ position: 'relative', width: '100%', height: 180, background: '#f0ede8' }}>
+              <Image src={imageUrl} alt="Post image" fill style={{ objectFit: 'cover' }} sizes="480px" />
+              <button
+                type="button"
+                onClick={() => setImageUrl(null)}
+                style={{
+                  position: 'absolute', top: 8, right: 8,
+                  background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff',
+                  width: 28, height: 28, cursor: 'pointer', borderRadius: '50%',
+                  fontSize: 16, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >×</button>
+            </div>
+          ) : (
+            <button type="button" onClick={() => postInputRef.current?.click()} style={{
+              ...ghostBtn,
+              width: '100%',
+              padding: '20px',
+              textAlign: 'center',
+              background: 'var(--color-card)',
+            }}>
+              {uploadingPost ? 'Uploading…' : '+ Add image'}
+            </button>
+          )}
+          <input ref={postInputRef} type="file" accept="image/*" onChange={handlePostImage} style={{ display: 'none' }} />
+        </div>
+
+        <button
+          type="submit"
+          disabled={publishing || !title.trim() || !content.trim() || !authorName.trim()}
+          style={{
+            padding: '16px',
+            background: title && content && authorName ? 'var(--color-primary)' : '#ccc',
+            color: '#fff', border: 'none', fontSize: 11,
+            letterSpacing: '0.12em', textTransform: 'uppercase',
+            cursor: title && content && authorName ? 'pointer' : 'not-allowed',
+            fontFamily: 'inherit', marginTop: 8,
+          }}
+        >
+          {publishing ? 'Publishing…' : 'Publish Post'}
+        </button>
+      </form>
+    </div>
+  )
+}
+
+const inputStyle: React.CSSProperties = {
+  padding: '12px',
+  border: '0.5px solid var(--color-border)',
+  background: 'var(--color-card)',
+  fontSize: 14,
+  fontFamily: 'inherit',
+  color: 'var(--color-text)',
+  outline: 'none',
+  width: '100%',
+}
+
+const ghostBtn: React.CSSProperties = {
+  background: 'none',
+  border: 'var(--border)',
+  padding: '8px 16px',
+  fontSize: 10,
+  letterSpacing: '0.1em',
+  textTransform: 'uppercase',
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+  color: 'var(--color-text-muted)',
+}

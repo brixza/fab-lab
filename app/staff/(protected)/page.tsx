@@ -33,20 +33,23 @@ export default function StaffPage() {
         </form>
       </div>
 
-      {/* New transaction — primary action */}
-      <Link href="/staff/transaction" style={{
-        display: 'block',
-        background: 'var(--color-primary)',
-        color: '#fff',
-        padding: '18px 24px',
-        textDecoration: 'none',
-        fontSize: 11,
-        letterSpacing: '0.12em',
-        textTransform: 'uppercase',
-        textAlign: 'center',
-      }}>
-        New Transaction
-      </Link>
+      {/* Primary actions */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <Link href="/staff/transaction" style={{
+          display: 'block', background: 'var(--color-primary)', color: '#fff',
+          padding: '18px 24px', textDecoration: 'none', fontSize: 11,
+          letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'center',
+        }}>
+          New Transaction
+        </Link>
+        <Link href="/staff/posts" style={{
+          display: 'block', background: 'none', color: 'var(--color-primary)',
+          border: 'var(--border)', padding: '14px 24px', textDecoration: 'none',
+          fontSize: 11, letterSpacing: '0.12em', textTransform: 'uppercase', textAlign: 'center',
+        }}>
+          New Post
+        </Link>
+      </div>
 
       {/* Customer lookup */}
       <div>
