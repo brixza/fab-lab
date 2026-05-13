@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import RadarChart from '@/components/RadarChart'
 import WishlistSection from '@/components/WishlistSection'
 import ShareModal from '@/components/ShareModal'
+import LogoutButton from '@/components/LogoutButton'
 import type { RadarDimension } from '@/components/RadarChart'
 import type { Customer, WishlistItem } from '@/types/database'
 
@@ -102,7 +103,7 @@ export default async function ProfilePage() {
       </div>
 
       {/* Suggestions */}
-      <div style={{ padding: '24px 20px' }}>
+      <div style={{ padding: '24px 20px', borderBottom: 'var(--border)' }}>
         <p className="label" style={{ marginBottom: 16 }}>You might also like</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           {SUGGESTIONS.map((s) => (
@@ -113,6 +114,11 @@ export default async function ProfilePage() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Sign out */}
+      <div style={{ padding: '24px 20px' }}>
+        <LogoutButton />
       </div>
 
     </div>
