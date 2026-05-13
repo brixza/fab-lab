@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import QRCode from 'react-qr-code'
 import ProductPicker from '@/components/ProductPicker'
 import type { Product } from '@/types/database'
@@ -11,13 +12,46 @@ interface CartItem {
   quantity: number
 }
 
+const PARTICLES = Array.from({ length: 16 }, (_, i) => ({
+  id: i,
+  x: 38 + Math.sin(i * 22.5 * Math.PI / 180) * 90,
+  y: 38 + Math.cos(i * 22.5 * Math.PI / 180) * 90,
+  delay: `${(i * 0.06).toFixed(2)}s`,
+  duration: `${(0.9 + (i % 4) * 0.2).toFixed(1)}s`,
+  color: i % 3 === 0 ? '#8a6d1a' : i % 3 === 1 ? '#fff' : '#c4a35a',
+  size: i % 2 === 0 ? 6 : 4,
+}))
+
 export default function TransactionPage() {
+  const router = useRouter()
   const [cart, setCart] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(false)
   const [claimToken, setClaimToken] = useState<string | null>(null)
   const [expiresAt, setExpiresAt] = useState<string | null>(null)
+  const [celebrated, setCelebrated] = useState(false)
+  const [pointsAwarded, setPointsAwarded] = useState(0)
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const total = cart.reduce((sum, i) => sum + i.quantity * i.product.unit_price, 0)
+
+  // Poll for claim status while QR is displayed
+  useEffect(() => {
+    if (!claimToken || celebrated) return
+
+    pollRef.current = setInterval(async () => {
+      const res = await fetch(`/api/staff/claim-token/${claimToken}`)
+      if (!res.ok) return
+      const data = await res.json()
+      if (data.claimed) {
+        clearInterval(pollRef.current!)
+        setPointsAwarded(data.points_awarded)
+        setCelebrated(true)
+        setTimeout(() => router.push('/staff'), 3600)
+      }
+    }, 2000)
+
+    return () => { if (pollRef.current) clearInterval(pollRef.current) }
+  }, [claimToken, celebrated, router])
 
   function addProduct(product: Product) {
     setCart(prev => {
@@ -70,22 +104,73 @@ export default function TransactionPage() {
     ? `${typeof window !== 'undefined' ? window.location.origin : ''}/claim?token=${claimToken}`
     : null
 
-  // QR display — fullscreen dark
+  // QR display + celebration — fullscreen dark
   if (claimToken && claimUrl) {
     const expiresIn = expiresAt
       ? Math.max(0, Math.round((new Date(expiresAt).getTime() - Date.now()) / 60000))
       : 15
 
+    if (celebrated) {
+      return (
+        <div className="celebrate-exit" style={{
+          minHeight: '100dvh', display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          background: 'var(--color-primary)', position: 'relative', overflow: 'hidden',
+        }}>
+          {/* Expanding rings */}
+          {[0, 0.3, 0.6].map((delay, i) => (
+            <div key={i} className="celebrate-ring" style={{
+              position: 'absolute',
+              width: 120, height: 120, borderRadius: '50%',
+              border: '1px solid rgba(138,109,26,0.6)',
+              animationDelay: `${delay}s`,
+            }} />
+          ))}
+
+          {/* Particles */}
+          {PARTICLES.map(p => (
+            <div key={p.id} className="celebrate-particle" style={{
+              position: 'absolute',
+              left: `calc(50% + ${p.x - 38}px)`,
+              top: `calc(50% + ${p.y - 38}px)`,
+              width: p.size, height: p.size,
+              borderRadius: '50%',
+              background: p.color,
+              '--delay': p.delay,
+              '--duration': p.duration,
+            } as React.CSSProperties} />
+          ))}
+
+          {/* Checkmark */}
+          <div className="celebrate-check" style={{
+            width: 80, height: 80, borderRadius: '50%',
+            border: '1.5px solid rgba(255,255,255,0.9)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            marginBottom: 24, position: 'relative', zIndex: 1,
+          }}>
+            <svg width={32} height={32} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.5} strokeLinecap="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+
+          {/* Points */}
+          <div className="celebrate-points" style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+            <p style={{ fontSize: 42, color: '#fff', margin: '0 0 8px', letterSpacing: '-0.02em' }}>
+              +{pointsAwarded.toLocaleString('sv-SE')}
+            </p>
+            <p style={{ fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', margin: 0 }}>
+              points earned
+            </p>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div style={{
-        minHeight: '100dvh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 32,
-        padding: 32,
-        background: 'var(--color-primary)',
+        minHeight: '100dvh', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        gap: 32, padding: 32, background: 'var(--color-primary)',
       }}>
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', margin: '0 0 8px' }}>
@@ -112,15 +197,10 @@ export default function TransactionPage() {
         <button
           onClick={() => { setClaimToken(null); setCart([]) }}
           style={{
-            background: 'none',
-            border: '0.5px solid rgba(255,255,255,0.25)',
-            color: 'rgba(255,255,255,0.55)',
-            padding: '10px 28px',
-            fontSize: 10,
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
+            background: 'none', border: '0.5px solid rgba(255,255,255,0.25)',
+            color: 'rgba(255,255,255,0.55)', padding: '10px 28px',
+            fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase',
+            cursor: 'pointer', fontFamily: 'inherit',
           }}
         >
           New Transaction

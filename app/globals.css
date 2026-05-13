@@ -47,3 +47,46 @@ button, input, select, textarea {
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
+
+/* Celebration animations */
+@keyframes celebrate-ring {
+  0%   { transform: scale(0); opacity: 0.8; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+@keyframes celebrate-check {
+  0%   { opacity: 0; transform: scale(0.5); }
+  60%  { transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes celebrate-points {
+  0%   { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes celebrate-particle {
+  0%   { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-120px) scale(0.3); }
+}
+
+@keyframes celebrate-fade-out {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.celebrate-ring {
+  animation: celebrate-ring 1.2s ease-out forwards;
+}
+.celebrate-check {
+  animation: celebrate-check 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+.celebrate-points {
+  animation: celebrate-points 0.5s ease-out 0.6s both;
+}
+.celebrate-particle {
+  animation: celebrate-particle var(--duration, 1.2s) ease-out var(--delay, 0s) both;
+}
+.celebrate-exit {
+  animation: celebrate-fade-out 0.6s ease-in 2.8s both;
+}
