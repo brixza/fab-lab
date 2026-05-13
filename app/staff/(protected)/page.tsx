@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createServiceClient } from '@/lib/supabase/server'
 import StaffSearch from './StaffSearch'
 import PostsList from './PostsList'
+import StaffLockButton from '@/components/StaffLockButton'
 import type { Post } from '@/types/database'
 
 export default async function StaffPage() {
@@ -22,24 +23,7 @@ export default async function StaffPage() {
           </p>
           <p className="label">staff terminal</p>
         </div>
-        <form action="/api/staff/auth" method="POST">
-          <button
-            formMethod="DELETE"
-            style={{
-              background: 'none',
-              border: 'var(--border)',
-              padding: '6px 12px',
-              fontSize: 10,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-              color: 'var(--color-text-muted)',
-            }}
-          >
-            Lock
-          </button>
-        </form>
+        <StaffLockButton />
       </div>
 
       {/* Primary actions */}
