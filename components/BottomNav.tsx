@@ -48,8 +48,8 @@ export default function BottomNav() {
             <Image
               src={icon}
               alt={label}
-              width={22}
-              height={22}
+              width={29}
+              height={29}
               style={{ opacity: active ? 1 : 0.4 }}
             />
             <span style={{ fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
