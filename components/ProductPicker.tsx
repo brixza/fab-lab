@@ -52,7 +52,7 @@ export default function ProductPicker({ onSelect }: Props) {
     <div ref={ref} style={{ position: 'relative' }}>
       <input
         type="text"
-        placeholder="Search product name, brand or SKU…"
+        placeholder="Search product name or brand…"
         value={query}
         onChange={e => setQuery(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}
