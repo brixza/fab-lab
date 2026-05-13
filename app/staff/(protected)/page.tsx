@@ -1,7 +1,16 @@
 import Link from 'next/link'
+import { createServiceClient } from '@/lib/supabase/server'
 import StaffSearch from './StaffSearch'
+import PostsList from './PostsList'
+import type { Post } from '@/types/database'
 
-export default function StaffPage() {
+export default async function StaffPage() {
+  const service = createServiceClient()
+  const { data: posts } = await service
+    .from('posts')
+    .select('*')
+    .order('published_at', { ascending: false }) as { data: Post[] | null }
+
   return (
     <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: 32 }}>
 
@@ -55,6 +64,12 @@ export default function StaffPage() {
       <div>
         <p className="label" style={{ marginBottom: 14 }}>Customer lookup</p>
         <StaffSearch />
+      </div>
+
+      {/* Posts */}
+      <div>
+        <p className="label" style={{ marginBottom: 14 }}>Posts</p>
+        <PostsList initialPosts={posts ?? []} />
       </div>
 
     </div>
