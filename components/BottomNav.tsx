@@ -5,10 +5,10 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 const tabs = [
-  { href: '/dashboard', label: 'Home',      icon: '/icons/home.png' },
-  { href: '/purchases', label: 'Purchases', icon: '/icons/purchases.png' },
-  { href: '/news',      label: 'News',      icon: '/icons/news.png' },
-  { href: '/profile',   label: 'Profile',   icon: '/icons/profile.png' },
+  { href: '/dashboard', label: 'Home',      icon: '/icons/home.PNG' },
+  { href: '/purchases', label: 'Purchases', icon: '/icons/purchases.PNG' },
+  { href: '/news',      label: 'News',      icon: '/icons/news.PNG' },
+  { href: '/profile',   label: 'Profile',   icon: '/icons/profile.PNG' },
 ]
 
 export default function BottomNav() {
