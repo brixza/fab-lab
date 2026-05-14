@@ -39,6 +39,7 @@ body {
 button, input, select, textarea {
   border-radius: 0;
   font-family: var(--font-serif);
+  font-size: 16px; /* prevents iOS Safari auto-zoom on focus */
 }
 
 .label {
