@@ -14,7 +14,7 @@ export default async function CustomerLayout({ children }: { children: React.Rea
     <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', maxWidth: 480, margin: '0 auto' }}>
       <PendingClaimHandler />
       <InstallPrompt />
-      <main style={{ flex: 1, overflowY: 'auto', paddingBottom: 72 }}>
+      <main style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingBottom: 72 }}>
         {children}
       </main>
       <BottomNav />

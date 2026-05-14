@@ -45,7 +45,7 @@ export default async function ProductPage({ params }: { params: Promise<{ sku: s
   const hasPyramid = (productNotes ?? []).length > 0
 
   return (
-    <div style={{ paddingBottom: 40, overflowX: 'hidden' }}>
+    <div style={{ paddingBottom: 40 }}>
 
       {/* Back */}
       <div style={{ padding: '16px 20px', borderBottom: 'var(--border)' }}>
