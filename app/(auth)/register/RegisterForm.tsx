@@ -4,6 +4,7 @@ import { use, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { track } from '@/components/Analytics'
 
 export default function RegisterForm({
   searchParams,
@@ -44,6 +45,7 @@ export default function RegisterForm({
       return
     }
 
+    track('registration_completed', { had_claim_token: !!claimToken })
     if (claimToken) sessionStorage.setItem('pending_claim_token', claimToken)
     router.push('/dashboard')
     router.refresh()

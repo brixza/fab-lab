@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { track } from '@/components/Analytics'
 
 interface Props {
   publicToken: string
@@ -20,6 +21,7 @@ export default function ShareModal({ publicToken, name }: Props) {
     await navigator.clipboard.writeText(profileUrl)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+    track('profile_link_copied')
   }
 
   async function sendEmail(e: React.FormEvent) {
@@ -34,6 +36,7 @@ export default function ShareModal({ publicToken, name }: Props) {
 
     setSent(true)
     setSending(false)
+    track('profile_shared_by_email')
   }
 
   if (!open) {
