@@ -31,7 +31,7 @@ export default async function DashboardPage() {
     .select('*, purchase_items(*)')
     .eq('customer_id', customer.id)
     .order('created_at', { ascending: false })
-    .limit(2) as { data: (Purchase & { purchase_items: PurchaseItem[] })[] | null }
+    .limit(3) as { data: (Purchase & { purchase_items: PurchaseItem[] })[] | null }
 
   const tier = customer.tier as Tier
   const tierColor = TIER_COLORS[tier]
