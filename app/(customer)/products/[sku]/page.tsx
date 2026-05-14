@@ -62,7 +62,7 @@ export default async function ProductPage({ params }: { params: Promise<{ sku: s
       </div>
 
       {/* Image */}
-      <div style={{ position: 'relative', width: '100%', paddingBottom: '65%', background: '#f0ede8' }}>
+      <div style={{ position: 'relative', width: '100%', paddingBottom: '50%', background: '#f0ede8' }}>
         {product.image_url && (
           <Image
             src={product.image_url}
