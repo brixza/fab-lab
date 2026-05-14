@@ -42,21 +42,21 @@ on conflict (name) do nothing;
 
 -- Link notes to the product
 insert into product_notes (sku, note_id, layer, sort_order)
-select 'st-vetyver', id, 'top', 0    from fragrance_notes where name = 'Seagrass'
+select 'st-vetyver-d-s-durga', id, 'top', 0    from fragrance_notes where name = 'Seagrass'
 union all
-select 'st-vetyver', id, 'top', 1    from fragrance_notes where name = 'Bitter Orange'
+select 'st-vetyver-d-s-durga', id, 'top', 1    from fragrance_notes where name = 'Bitter Orange'
 union all
-select 'st-vetyver', id, 'top', 2    from fragrance_notes where name = 'Pink Pepper'
+select 'st-vetyver-d-s-durga', id, 'top', 2    from fragrance_notes where name = 'Pink Pepper'
 union all
-select 'st-vetyver', id, 'middle', 0 from fragrance_notes where name = 'Hat Straw'
+select 'st-vetyver-d-s-durga', id, 'middle', 0 from fragrance_notes where name = 'Hat Straw'
 union all
-select 'st-vetyver', id, 'middle', 1 from fragrance_notes where name = 'Reed'
+select 'st-vetyver-d-s-durga', id, 'middle', 1 from fragrance_notes where name = 'Reed'
 union all
-select 'st-vetyver', id, 'middle', 2 from fragrance_notes where name = 'Clove Leaf'
+select 'st-vetyver-d-s-durga', id, 'middle', 2 from fragrance_notes where name = 'Clove Leaf'
 union all
-select 'st-vetyver', id, 'base', 0   from fragrance_notes where name = 'Rhum Agricole'
+select 'st-vetyver-d-s-durga', id, 'base', 0   from fragrance_notes where name = 'Rhum Agricole'
 union all
-select 'st-vetyver', id, 'base', 1   from fragrance_notes where name = 'Vetiver'
+select 'st-vetyver-d-s-durga', id, 'base', 1   from fragrance_notes where name = 'Vetiver'
 union all
-select 'st-vetyver', id, 'base', 2   from fragrance_notes where name = 'Breadnut'
+select 'st-vetyver-d-s-durga', id, 'base', 2   from fragrance_notes where name = 'Breadnut'
 on conflict (sku, note_id, layer) do nothing;
