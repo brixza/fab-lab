@@ -68,7 +68,7 @@ export default async function ProductPage({ params }: { params: Promise<{ sku: s
             src={product.image_url}
             alt={product.product_name}
             fill
-            style={{ objectFit: 'cover' }}
+            style={{ objectFit: 'contain' }}
             sizes="480px"
             priority
           />
