@@ -82,7 +82,7 @@ export default function ProductsBrowser({ customerId, brands, initialWishlistSku
           style={{
             width: '100%', padding: '11px 14px',
             border: 'var(--border)', background: 'var(--color-bg)',
-            fontSize: 13, fontFamily: 'inherit', color: 'var(--color-text)', outline: 'none',
+            fontFamily: 'inherit', color: 'var(--color-text)', outline: 'none',
           }}
         />
         <select
@@ -91,7 +91,7 @@ export default function ProductsBrowser({ customerId, brands, initialWishlistSku
           style={{
             width: '100%', padding: '10px 14px',
             border: 'var(--border)', background: 'var(--color-bg)',
-            fontSize: 12, fontFamily: 'inherit', color: brand ? 'var(--color-text)' : 'var(--color-text-muted)',
+            fontFamily: 'inherit', color: brand ? 'var(--color-text)' : 'var(--color-text-muted)',
             outline: 'none', appearance: 'none',
           }}
         >
