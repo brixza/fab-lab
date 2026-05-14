@@ -40,10 +40,10 @@ export default async function DashboardPage() {
   const firstName = customer.name.split(' ')[0]
 
   return (
-    <div style={{ padding: '32px 20px', display: 'flex', flexDirection: 'column', gap: 28 }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '32px 20px 24px' }}>
         <AvatarUpload
           userId={user.id}
           customerId={customer.id}
@@ -162,8 +162,8 @@ export default async function DashboardPage() {
       </div>
 
       {/* Recent purchases */}
-      <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14 }}>
+      <div style={{ paddingTop: 28 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14, padding: '0 20px' }}>
           <p className="label">Recent purchases</p>
           <a href="/purchases" style={{ fontSize: 10, letterSpacing: '0.08em', color: 'var(--color-text-muted)', textDecoration: 'none' }}>
             View all
@@ -172,7 +172,7 @@ export default async function DashboardPage() {
 
         {!recentPurchases || recentPurchases.length === 0 ? (
           <div style={{
-            padding: '24px',
+            padding: '24px 20px',
             border: 'var(--border)',
             textAlign: 'center',
           }}>
@@ -252,7 +252,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Member ID */}
-      <p style={{ fontSize: 11, color: 'var(--color-text-muted)', letterSpacing: '0.08em', textAlign: 'center' }}>
+      <p style={{ fontSize: 11, color: 'var(--color-text-muted)', letterSpacing: '0.08em', textAlign: 'center', padding: '20px 20px 32px' }}>
         Member {customer.member_id}
       </p>
 

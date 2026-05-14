@@ -34,7 +34,7 @@ export default async function PurchasesPage() {
     <div style={{ paddingBottom: 32 }}>
 
       {/* Header */}
-      <div style={{ padding: '32px 20px 20px', borderBottom: 'var(--border)' }}>
+      <div style={{ padding: '32px 20px 20px', borderBottom: 'var(--border)', background: 'var(--color-bg)' }}>
         <p className="label" style={{ marginBottom: 4 }}>Your history</p>
         <h1 style={{ fontSize: 22, fontWeight: 'normal', color: 'var(--color-primary)', margin: 0 }}>
           Purchases
