@@ -65,7 +65,7 @@ export default async function ProfilePage() {
       </div>
 
       {/* Radar chart */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 20px 16px', borderBottom: 'var(--border)', background: 'var(--color-card)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 32px 16px', borderBottom: 'var(--border)', background: 'var(--color-card)', overflow: 'visible' }}>
         <RadarChart dimensions={PROFILE} size={260} color="#2c3e50" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px 24px', marginTop: 8, width: '100%', maxWidth: 280 }}>
           {PROFILE.map((d) => (

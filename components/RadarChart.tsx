@@ -18,8 +18,8 @@ export default function RadarChart({
 }: RadarChartProps) {
   const cx = size / 2
   const cy = size / 2
-  const radius = size * 0.34
-  const labelRadius = size * 0.46
+  const radius = size * 0.28
+  const labelRadius = size * 0.40
   const rings = [0.25, 0.5, 0.75, 1]
   const n = dimensions.length
 
@@ -39,7 +39,7 @@ export default function RadarChart({
     .join(' ') + ' Z'
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ overflow: 'visible' }}>
       {/* Grid rings */}
       {rings.map((ring) => {
         const pts = dimensions.map((_, i) => polarToXY(i, ring * radius))
