@@ -45,7 +45,7 @@ export default async function ProductPage({ params }: { params: Promise<{ sku: s
   const hasPyramid = (productNotes ?? []).length > 0
 
   return (
-    <div style={{ paddingBottom: 40 }}>
+    <div style={{ paddingBottom: 40, overflowX: 'hidden' }}>
 
       {/* Back */}
       <div style={{ padding: '16px 20px', borderBottom: 'var(--border)' }}>
@@ -99,7 +99,7 @@ export default async function ProductPage({ params }: { params: Promise<{ sku: s
 
         {/* Description */}
         {product.description && (
-          <p style={{ fontSize: 13, color: 'var(--color-text)', lineHeight: 1.7, margin: 0 }}>
+          <p style={{ fontSize: 13, color: 'var(--color-text)', lineHeight: 1.7, margin: 0, overflowWrap: 'break-word' }}>
             {product.description}
           </p>
         )}
