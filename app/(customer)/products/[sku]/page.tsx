@@ -62,7 +62,7 @@ export default async function ProductPage({ params }: { params: Promise<{ sku: s
       </div>
 
       {/* Image */}
-      <div style={{ position: 'relative', width: '100%', paddingBottom: '100%', background: '#f0ede8' }}>
+      <div style={{ position: 'relative', width: '100%', paddingBottom: '65%', background: '#f0ede8' }}>
         {product.image_url && (
           <Image
             src={product.image_url}
@@ -96,6 +96,21 @@ export default async function ProductPage({ params }: { params: Promise<{ sku: s
             initialWishlisted={!!wishlistItem}
           />
         </div>
+
+        {/* Description */}
+        {product.description && (
+          <p style={{ fontSize: 13, color: 'var(--color-text)', lineHeight: 1.7, margin: 0 }}>
+            {product.description}
+          </p>
+        )}
+
+        {/* Scent family */}
+        {product.scent_family && (
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <p className="label" style={{ margin: 0, color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>Scent family</p>
+            <p style={{ fontSize: 12, color: 'var(--color-primary)', margin: 0 }}>{product.scent_family}</p>
+          </div>
+        )}
 
         {/* Fragrance pyramid */}
         {hasPyramid && (

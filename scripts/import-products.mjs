@@ -22,6 +22,26 @@ function escape(str) {
   return str.replace(/'/g, "''")
 }
 
+function stripHtml(html) {
+  return html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+}
+
+function parseBodyHtml(html) {
+  if (!html) return { description: null, scent_family: null }
+
+  // Extract scent family from "Doftfamilj: ..." paragraph
+  const familyMatch = html.match(/Doftfamilj[:\s]+([^<]+)/i)
+  const scent_family = familyMatch ? familyMatch[1].trim() : null
+
+  // Find the main description paragraph — the longest plain-text block
+  const paragraphs = [...html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)]
+    .map(m => stripHtml(m[1]))
+    .filter(t => t.length > 80 && !/doftfamilj/i.test(t) && !/toppnot|hjärtnot|basnot/i.test(t))
+  const description = paragraphs[0] ?? null
+
+  return { description, scent_family }
+}
+
 const seen = new Map() // Handle → product data
 
 const parser = createReadStream(CSV_PATH).pipe(
@@ -45,15 +65,22 @@ parser.on('data', (row) => {
   const sku = handle // use handle as unique SKU
   const price = cleanPrice(row['Variant Price'])
   const imageSrc = (row['Image Src'] || '').trim()
+  const bodyHtml = row['Body (HTML)'] || ''
 
   if (!title || !brand || !price) return
 
   const existing = seen.get(handle)
 
   if (!existing) {
-    seen.set(handle, { title, brand, sku, price, image_url: imageSrc || null })
-  } else if (!existing.image_url && imageSrc) {
-    existing.image_url = imageSrc
+    const { description, scent_family } = parseBodyHtml(bodyHtml)
+    seen.set(handle, { title, brand, sku, price, image_url: imageSrc || null, description, scent_family })
+  } else {
+    if (!existing.image_url && imageSrc) existing.image_url = imageSrc
+    if (!existing.description && bodyHtml) {
+      const { description, scent_family } = parseBodyHtml(bodyHtml)
+      existing.description = description
+      existing.scent_family = scent_family
+    }
   }
 })
 
@@ -68,13 +95,15 @@ parser.on('end', () => {
     '-- Clear existing seed data first (optional — comment out to keep existing)',
     "DELETE FROM products WHERE sku NOT IN ('PIG-BRU-100','RPS-PHE-50','LBG-1992-75','LIV-IGG-50','XX-NEO-100');",
     '',
-    'INSERT INTO products (sku, product_name, brand, unit_price, image_url, active) VALUES',
+    'INSERT INTO products (sku, product_name, brand, unit_price, image_url, description, scent_family, active) VALUES',
   ]
 
   const values = products.map((p, i) => {
     const comma = i < products.length - 1 ? ',' : ';'
     const img = p.image_url ? `'${escape(p.image_url)}'` : 'NULL'
-    return `  ('${escape(p.sku)}', '${escape(p.title)}', '${escape(p.brand)}', ${p.price}, ${img}, true)${comma}`
+    const desc = p.description ? `'${escape(p.description)}'` : 'NULL'
+    const family = p.scent_family ? `'${escape(p.scent_family)}'` : 'NULL'
+    return `  ('${escape(p.sku)}', '${escape(p.title)}', '${escape(p.brand)}', ${p.price}, ${img}, ${desc}, ${family}, true)${comma}`
   })
 
   lines.push(...values)

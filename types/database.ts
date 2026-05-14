@@ -86,6 +86,8 @@ export interface Product {
   brand: string
   unit_price: number
   image_url: string | null
+  description: string | null
+  scent_family: string | null
   active: boolean
   created_at: string
 }
