@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import type { Product, WishlistItem } from '@/types/database'
+import type { Product } from '@/types/database'
 
 interface Props {
   customerId: string
@@ -118,50 +119,52 @@ export default function ProductsBrowser({ customerId, brands, initialWishlistSku
           const toggling = togglingSkus.has(product.sku)
           return (
             <div key={product.id} style={{ background: 'var(--color-card)', display: 'flex', flexDirection: 'column' }}>
-              {/* Image */}
-              <div style={{ position: 'relative', paddingBottom: '120%', background: '#f0ede8' }}>
-                {product.image_url && (
-                  <Image
-                    src={product.image_url}
-                    alt={product.product_name}
-                    fill
-                    style={{ objectFit: 'cover' }}
-                    sizes="50vw"
-                  />
-                )}
-                {/* Wishlist button */}
-                <button
-                  onClick={() => toggleWishlist(product)}
-                  disabled={toggling}
-                  style={{
-                    position: 'absolute', top: 8, right: 8,
-                    width: 32, height: 32, borderRadius: '50%',
-                    background: 'rgba(255,255,255,0.9)',
-                    border: 'none', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    opacity: toggling ? 0.5 : 1,
-                  }}
-                >
-                  <svg width={14} height={14} viewBox="0 0 24 24"
-                    fill={wishlisted ? 'var(--color-primary)' : 'none'}
-                    stroke="var(--color-primary)" strokeWidth={1.5}>
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                </button>
-              </div>
+              <Link href={`/products/${product.sku}`} style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                {/* Image */}
+                <div style={{ position: 'relative', paddingBottom: '120%', background: '#f0ede8' }}>
+                  {product.image_url && (
+                    <Image
+                      src={product.image_url}
+                      alt={product.product_name}
+                      fill
+                      style={{ objectFit: 'cover' }}
+                      sizes="50vw"
+                    />
+                  )}
+                  {/* Wishlist button — stops propagation so click doesn't navigate */}
+                  <button
+                    onClick={e => { e.preventDefault(); toggleWishlist(product) }}
+                    disabled={toggling}
+                    style={{
+                      position: 'absolute', top: 8, right: 8,
+                      width: 32, height: 32, borderRadius: '50%',
+                      background: 'rgba(255,255,255,0.9)',
+                      border: 'none', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      opacity: toggling ? 0.5 : 1,
+                    }}
+                  >
+                    <svg width={14} height={14} viewBox="0 0 24 24"
+                      fill={wishlisted ? 'var(--color-primary)' : 'none'}
+                      stroke="var(--color-primary)" strokeWidth={1.5}>
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </button>
+                </div>
 
-              {/* Info */}
-              <div style={{ padding: '10px 12px 14px' }}>
-                <p className="label" style={{ margin: '0 0 2px', color: 'var(--color-text-muted)' }}>
-                  {product.brand}
-                </p>
-                <p style={{ fontSize: 12, color: 'var(--color-primary)', margin: '0 0 4px', lineHeight: 1.3 }}>
-                  {product.product_name}
-                </p>
-                <p style={{ fontSize: 11, color: 'var(--color-text-muted)', margin: 0 }}>
-                  {product.unit_price.toLocaleString('sv-SE')} kr
-                </p>
-              </div>
+                {/* Info */}
+                <div style={{ padding: '10px 12px 14px' }}>
+                  <p className="label" style={{ margin: '0 0 2px', color: 'var(--color-text-muted)' }}>
+                    {product.brand}
+                  </p>
+                  <p style={{ fontSize: 12, color: 'var(--color-primary)', margin: '0 0 4px', lineHeight: 1.3 }}>
+                    {product.product_name}
+                  </p>
+                  <p style={{ fontSize: 11, color: 'var(--color-text-muted)', margin: 0 }}>
+                    {product.unit_price.toLocaleString('sv-SE')} kr
+                  </p>
+                </div>
+              </Link>
             </div>
           )
         })}
