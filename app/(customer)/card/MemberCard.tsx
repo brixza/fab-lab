@@ -71,7 +71,7 @@ export default function MemberCard({ customer }: { customer: Customer }) {
           <QRCode
             value={customer.member_id}
             size={128}
-            fgColor="#2c3e50"
+            fgColor="#26526F"
             bgColor="#ffffff"
             style={{ display: 'block' }}
           />

@@ -104,7 +104,7 @@ export default function ImageCropModal({ file, aspect, onConfirm, onCancel }: Pr
           Cancel
         </button>
         <button onClick={confirm} disabled={!completedCrop} style={{
-          padding: '12px 28px', background: '#fff', color: '#2c3e50',
+          padding: '12px 28px', background: '#fff', color: '#26526F',
           border: 'none', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase',
           cursor: completedCrop ? 'pointer' : 'not-allowed', fontFamily: 'inherit',
           opacity: completedCrop ? 1 : 0.5,

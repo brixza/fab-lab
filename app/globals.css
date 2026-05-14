@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary:     #2c3e50;
+  --color-primary:     #26526F;
   --color-bg:          #f7f5f2;
   --color-card:        #ffffff;
   --color-border:      #e0ddd8;
@@ -9,7 +9,7 @@
   --color-bronze:      #9c6d3e;
   --color-silver:      #5a6472;
   --color-gold:        #8a6d1a;
-  --color-text:        #2c3e50;
+  --color-text:        #26526F;
   --color-text-muted:  #6b6b6b;
 
   --font-serif: Georgia, 'Times New Roman', serif;

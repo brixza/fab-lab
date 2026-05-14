@@ -182,7 +182,7 @@ export default function TransactionPage() {
         </div>
 
         <div style={{ background: '#fff', padding: 24 }}>
-          <QRCode value={claimUrl} size={220} fgColor="#2c3e50" bgColor="#ffffff" />
+          <QRCode value={claimUrl} size={220} fgColor="#26526F" bgColor="#ffffff" />
         </div>
 
         <div style={{ textAlign: 'center' }}>

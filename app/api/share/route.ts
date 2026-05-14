@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
           <!-- Header -->
           <tr>
             <td style="padding-bottom:32px;text-align:center;">
-              <p style="margin:0;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#2c3e50;">
+              <p style="margin:0;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#26526F;">
                 fab-lab
               </p>
             </td>
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
           <!-- Card -->
           <tr>
-            <td style="background:#2c3e50;padding:32px 28px;">
+            <td style="background:#26526F;padding:32px 28px;">
               <p style="margin:0 0 8px;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.45);">
                 fragrance profile
               </p>
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
                 View their fragrance profile and wishlist — great for gift inspiration.
               </p>
               <a href="${profileUrl}"
-                style="display:inline-block;padding:14px 28px;background:#f7f5f2;color:#2c3e50;
+                style="display:inline-block;padding:14px 28px;background:#f7f5f2;color:#26526F;
                 text-decoration:none;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;">
                 View Profile &amp; Wishlist
               </a>
@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
             <td style="padding:24px 0;text-align:center;">
               <p style="margin:0;font-size:11px;color:#6b6b6b;line-height:1.6;">
                 Fab-lab is an independent perfume boutique in Stockholm.<br/>
-                <a href="https://fab-lab.nu" style="color:#2c3e50;">fab-lab.nu</a>
+                <a href="https://fab-lab.nu" style="color:#26526F;">fab-lab.nu</a>
               </p>
             </td>
           </tr>

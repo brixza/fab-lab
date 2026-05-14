@@ -83,7 +83,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
         <div>
           <p className="label" style={{ marginBottom: 16 }}>Fragrance profile</p>
           <div style={{ display: 'flex', justifyContent: 'center', background: 'var(--color-card)', border: 'var(--border)', padding: '24px 0' }}>
-            <RadarChart dimensions={DEMO_PROFILE} size={240} color="#2c3e50" />
+            <RadarChart dimensions={DEMO_PROFILE} size={240} color="#26526F" />
           </div>
         </div>
 
