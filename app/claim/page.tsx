@@ -3,7 +3,6 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { track } from '@/components/Analytics'
 
 type State = 'checking' | 'claiming' | 'success' | 'expired' | 'used' | 'error' | 'unauthenticated'
 
@@ -40,7 +39,6 @@ function ClaimContent() {
       if (res.ok) {
         setPointsAwarded(data.points_awarded)
         setState('success')
-        track('claim_completed', { points_awarded: data.points_awarded })
       } else if (res.status === 409) setState('used')
       else if (res.status === 410) setState('expired')
       else setState('error')

@@ -5,7 +5,6 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import type { WishlistItem, Product } from '@/types/database'
 import ProductPicker from './ProductPicker'
-import { track } from '@/components/Analytics'
 
 interface Props {
   customerId: string
@@ -34,7 +33,6 @@ export default function WishlistSection({ customerId, initialItems }: Props) {
     if (!error && data) {
       setItems(prev => [data, ...prev])
       setAdding(false)
-      track('wishlist_item_added', { product_name: product.product_name, brand: product.brand })
     }
   }
 
