@@ -99,6 +99,27 @@ export interface UnclaimedShopifyOrder {
   created_at: string
 }
 
+export type NoteLayer = 'top' | 'middle' | 'base'
+
+export interface FragranceNote {
+  id: string
+  name: string
+  image_url: string | null
+  created_at: string
+}
+
+export interface ProductNote {
+  id: string
+  sku: string
+  note_id: string
+  layer: NoteLayer
+  sort_order: number
+}
+
+export interface ProductNoteWithNote extends ProductNote {
+  fragrance_notes: FragranceNote
+}
+
 // Supabase Database type shape (used to type the client)
 export type Database = {
   public: {

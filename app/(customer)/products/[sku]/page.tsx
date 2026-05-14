@@ -2,8 +2,14 @@ import { notFound, redirect } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import type { Customer, Product, WishlistItem } from '@/types/database'
+import type { Customer, Product, WishlistItem, ProductNoteWithNote, NoteLayer } from '@/types/database'
 import WishlistToggle from './WishlistToggle'
+
+const LAYER_LABELS: Record<NoteLayer, string> = {
+  top: 'Top Notes',
+  middle: 'Middle Notes',
+  base: 'Base Notes',
+}
 
 export default async function ProductPage({ params }: { params: Promise<{ sku: string }> }) {
   const { sku } = await params
@@ -20,20 +26,23 @@ export default async function ProductPage({ params }: { params: Promise<{ sku: s
 
   if (!customer) redirect('/dashboard')
 
-  const { data: product } = await supabase
-    .from('products')
-    .select('*')
-    .eq('sku', sku)
-    .single() as { data: Product | null }
+  const [
+    { data: product },
+    { data: wishlistItem },
+    { data: productNotes },
+  ] = await Promise.all([
+    supabase.from('products').select('*').eq('sku', sku).single() as unknown as Promise<{ data: Product | null }>,
+    supabase.from('wishlists').select('id').eq('customer_id', customer.id).eq('sku', sku).single() as unknown as Promise<{ data: Pick<WishlistItem, 'id'> | null }>,
+    supabase.from('product_notes').select('*, fragrance_notes(*)').eq('sku', sku).order('sort_order') as unknown as Promise<{ data: ProductNoteWithNote[] | null }>,
+  ])
 
   if (!product) notFound()
 
-  const { data: wishlistItem } = await supabase
-    .from('wishlists')
-    .select('id')
-    .eq('customer_id', customer.id)
-    .eq('sku', sku)
-    .single() as { data: Pick<WishlistItem, 'id'> | null }
+  const notesByLayer = (productNotes ?? []).reduce<Record<NoteLayer, ProductNoteWithNote[]>>(
+    (acc, n) => { acc[n.layer].push(n); return acc },
+    { top: [], middle: [], base: [] }
+  )
+  const hasPyramid = (productNotes ?? []).length > 0
 
   return (
     <div style={{ paddingBottom: 40 }}>
@@ -87,6 +96,45 @@ export default async function ProductPage({ params }: { params: Promise<{ sku: s
             initialWishlisted={!!wishlistItem}
           />
         </div>
+
+        {/* Fragrance pyramid */}
+        {hasPyramid && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20, borderTop: 'var(--border)', paddingTop: 20 }}>
+            {(['top', 'middle', 'base'] as NoteLayer[]).map(layer => {
+              const notes = notesByLayer[layer]
+              if (!notes.length) return null
+              return (
+                <div key={layer}>
+                  <p className="label" style={{ margin: '0 0 12px', color: 'var(--color-text-muted)' }}>
+                    {LAYER_LABELS[layer]}
+                  </p>
+                  <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                    {notes.map(n => (
+                      <div key={n.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, minWidth: 56 }}>
+                        {n.fragrance_notes.image_url ? (
+                          <div style={{ width: 56, height: 56, position: 'relative', overflow: 'hidden', background: '#f0ede8' }}>
+                            <Image
+                              src={n.fragrance_notes.image_url}
+                              alt={n.fragrance_notes.name}
+                              fill
+                              style={{ objectFit: 'cover' }}
+                              sizes="56px"
+                            />
+                          </div>
+                        ) : (
+                          <div style={{ width: 56, height: 56, background: '#f0ede8' }} />
+                        )}
+                        <span style={{ fontSize: 10, color: 'var(--color-primary)', textAlign: 'center', letterSpacing: '0.04em' }}>
+                          {n.fragrance_notes.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
 
         {/* Buy on Shopify */}
         <a
