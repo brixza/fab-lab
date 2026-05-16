@@ -213,7 +213,7 @@ export default async function DashboardPage() {
           fontStyle: 'italic',
           color: 'var(--color-text-muted)',
           textAlign: 'center',
-          padding: '27px 28px 48px',
+          padding: '17px 28px 48px',
           lineHeight: 1.75,
           margin: 0,
         }}>
