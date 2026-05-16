@@ -43,7 +43,7 @@ export default async function DashboardPage() {
       {/* Header */}
       <div style={{
         background: '#fff',
-        padding: '14px 20px 16px',
+        padding: '4px 20px 16px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
