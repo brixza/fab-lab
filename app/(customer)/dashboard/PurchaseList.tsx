@@ -109,7 +109,7 @@ export default function PurchaseList({ purchases }: { purchases: PurchaseWithIte
             padding: '10px',
             background: '#fff',
             border: 'none',
-            borderTop: 'var(--border)',
+            borderBottom: 'var(--border)',
             cursor: 'pointer',
           }}
           aria-label={expanded ? 'Visa färre' : 'Visa fler köp'}
