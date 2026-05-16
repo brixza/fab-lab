@@ -33,6 +33,7 @@ export default function PurchaseList({ purchases }: { purchases: PurchaseWithIte
             <div key={purchase.id} style={{
               background: 'var(--color-card)',
               border: 'var(--border)',
+              borderBottom: 'none',
               padding: '16px',
               display: 'flex',
               gap: 14,
