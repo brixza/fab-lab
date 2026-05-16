@@ -29,11 +29,11 @@ export default async function DashboardPage() {
     .select('*, purchase_items(*)')
     .eq('customer_id', customer.id)
     .order('created_at', { ascending: false })
-    .limit(3) as { data: (Purchase & { purchase_items: PurchaseItem[] })[] | null }
+    .limit(1) as { data: (Purchase & { purchase_items: PurchaseItem[] })[] | null }
 
   const tier = customer.tier as Tier
   const firstName = customer.name.split(' ')[0].toUpperCase()
-  const tierLadder = [...TIERS].reverse() // top = highest tier
+  const tierLadder = [...TIERS].reverse()
   const tierIndex = TIERS.indexOf(tier)
 
   return (
@@ -74,17 +74,16 @@ export default async function DashboardPage() {
         <Image
           src="/fablab-raster.png"
           alt="Fab-lab"
-          width={96}
-          height={96}
+          width={115}
+          height={115}
           style={{ objectFit: 'contain' }}
         />
       </div>
 
-      {/* Tier visualization */}
+      {/* Tier visualization — no gap/divider from header */}
       <div style={{
         background: '#fff',
-        marginTop: 1,
-        padding: '20px 20px 24px',
+        padding: '20px 20px 12px',
         display: 'flex',
         alignItems: 'center',
       }}>
@@ -122,7 +121,7 @@ export default async function DashboardPage() {
                   <p style={{
                     fontFamily: 'var(--font-sans)',
                     fontSize: 14,
-                    fontWeight: 300,
+                    fontWeight: 400,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
                     color: 'var(--color-primary)',
@@ -134,7 +133,7 @@ export default async function DashboardPage() {
                   <p style={{
                     fontFamily: 'var(--font-sans)',
                     fontSize: 11,
-                    fontWeight: 300,
+                    fontWeight: 400,
                     color: 'var(--color-text-muted)',
                     margin: 0,
                     letterSpacing: '0.04em',
@@ -176,7 +175,7 @@ export default async function DashboardPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '16px 20px 16px',
+        padding: '4px 20px 12px',
         overflow: 'hidden',
       }}>
         <h2 style={{
@@ -201,7 +200,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* Purchase list */}
+      {/* Purchase list — single item */}
       {!recentPurchases || recentPurchases.length === 0 ? (
         <div style={{ padding: '24px 20px', textAlign: 'center' }}>
           <p style={{ fontSize: 12, color: 'var(--color-text-muted)' }}>
@@ -209,7 +208,7 @@ export default async function DashboardPage() {
           </p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        <>
           {recentPurchases.map((purchase) => {
             const items = purchase.purchase_items ?? []
             const firstItem = items[0]
@@ -241,7 +240,6 @@ export default async function DashboardPage() {
                     />
                   )}
                 </div>
-
                 <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 68 }}>
                   <div>
                     {firstItem && (
@@ -252,7 +250,7 @@ export default async function DashboardPage() {
                     <p style={{
                       fontFamily: 'var(--font-sans)',
                       fontSize: 14,
-                      fontWeight: 500,
+                      fontWeight: 400,
                       color: 'var(--color-primary)',
                       margin: 0,
                       whiteSpace: 'nowrap',
@@ -261,7 +259,7 @@ export default async function DashboardPage() {
                     }}>
                       {firstItem ? firstItem.product_name : 'Köp'}
                       {extraCount > 0 && (
-                        <span style={{ color: 'var(--color-text-muted)', fontSize: 11, fontWeight: 400 }}> +{extraCount}</span>
+                        <span style={{ color: 'var(--color-text-muted)', fontSize: 11 }}> +{extraCount}</span>
                       )}
                     </p>
                   </div>
@@ -270,7 +268,7 @@ export default async function DashboardPage() {
                       {new Date(purchase.created_at).toLocaleDateString('sv-SE')}
                     </p>
                     <div style={{ textAlign: 'right' }}>
-                      <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--color-primary)', margin: '0 0 1px', fontWeight: 500 }}>
+                      <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, fontWeight: 400, color: 'var(--color-primary)', margin: '0 0 1px' }}>
                         {purchase.total_amount.toLocaleString('sv-SE')} kr
                       </p>
                       <p style={{ fontSize: 10, color: 'var(--color-points)', letterSpacing: '0.08em', margin: 0 }}>
@@ -282,22 +280,38 @@ export default async function DashboardPage() {
               </div>
             )
           })}
-        </div>
+          <a href="/purchases" style={{
+            display: 'block',
+            textAlign: 'center',
+            padding: '12px 20px',
+            fontSize: 10,
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: 'var(--color-text-muted)',
+            textDecoration: 'none',
+            background: 'var(--color-card)',
+            borderTop: 'none',
+          }}>
+            Se alla köp →
+          </a>
+        </>
       )}
 
       {/* Footer quote */}
-      <p style={{
-        fontFamily: 'var(--font-serif)',
-        fontSize: 13,
-        fontStyle: 'italic',
-        color: 'var(--color-text-muted)',
-        textAlign: 'center',
-        padding: '32px 28px 48px',
-        lineHeight: 1.75,
-        margin: 0,
-      }}>
-        &ldquo;Det fina med dofter är att de talar till ditt hjärta och förhoppningsvis någon annans.&rdquo; &ndash; Elizabeth Taylor
-      </p>
+      <div style={{ background: '#fff', marginTop: 24 }}>
+        <p style={{
+          fontFamily: 'var(--font-serif)',
+          fontSize: 13,
+          fontStyle: 'italic',
+          color: 'var(--color-text-muted)',
+          textAlign: 'center',
+          padding: '32px 28px 48px',
+          lineHeight: 1.75,
+          margin: 0,
+        }}>
+          &ldquo;Det fina med dofter är att de talar till ditt hjärta och förhoppningsvis någon annans.&rdquo; &ndash; Elizabeth Taylor
+        </p>
+      </div>
 
     </div>
   )
