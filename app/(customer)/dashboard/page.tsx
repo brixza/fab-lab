@@ -74,8 +74,8 @@ export default async function DashboardPage() {
         <Image
           src="/fablab-raster.png"
           alt="Fab-lab"
-          width={72}
-          height={72}
+          width={96}
+          height={96}
           style={{ objectFit: 'contain' }}
         />
       </div>
@@ -172,10 +172,12 @@ export default async function DashboardPage() {
       {/* Min Doftgarderob header */}
       <div style={{
         marginTop: 24,
+        background: '#fff',
+        borderBottom: 'var(--border)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 20px 12px',
+        padding: '16px 20px',
         overflow: 'hidden',
       }}>
         <h2 style={{
