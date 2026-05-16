@@ -43,7 +43,7 @@ export default async function DashboardPage() {
       {/* Header */}
       <div style={{
         background: '#fff',
-        padding: '28px 20px 20px',
+        padding: '14px 20px 16px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -85,7 +85,7 @@ export default async function DashboardPage() {
       {/* Tier visualization */}
       <div style={{
         background: '#fff',
-        padding: '20px 20px 12px',
+        padding: '8px 20px 12px',
         display: 'flex',
         alignItems: 'center',
       }}>
@@ -173,28 +173,30 @@ export default async function DashboardPage() {
       <div style={{
         background: '#fff',
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         justifyContent: 'space-between',
-        padding: '4px 20px 12px',
+        padding: '4px 20px 0',
         overflow: 'hidden',
       }}>
         <h2 style={{
           fontFamily: 'var(--font-sans)',
-          fontSize: 16,
-          fontWeight: 700,
-          letterSpacing: '0.08em',
+          fontSize: 26,
+          fontWeight: 400,
+          letterSpacing: '0.06em',
           textTransform: 'uppercase',
           color: 'var(--color-primary)',
-          margin: 0,
+          margin: '0 0 0',
+          lineHeight: 1,
+          paddingBottom: 12,
         }}>
           Min doftgarderob
         </h2>
-        <div style={{ flexShrink: 0, marginRight: -8, marginLeft: -16 }}>
+        <div style={{ flexShrink: 0, marginRight: -8 }}>
           <Image
             src="/illustrations/bottles.png"
             alt=""
-            width={170}
-            height={94}
+            width={221}
+            height={122}
             style={{ objectFit: 'contain', display: 'block' }}
           />
         </div>
