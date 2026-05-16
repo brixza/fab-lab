@@ -3,10 +3,10 @@ import type { Tier } from '@/types/database'
 export const TIERS: Tier[] = ['bronze', 'silver', 'gold', 'platinum']
 
 export const TIER_THRESHOLDS: Record<Tier, number> = {
-  bronze:   0,
+  bronze:   1000,
   silver:   5000,
   gold:     15000,
-  platinum: 35000,
+  platinum: 25000,
 }
 
 export const TIER_COLORS: Record<Tier, string> = {
@@ -17,10 +17,10 @@ export const TIER_COLORS: Record<Tier, string> = {
 }
 
 export const TIER_LABELS: Record<Tier, string> = {
-  bronze:   'Bronze',
-  silver:   'Silver',
-  gold:     'Gold',
-  platinum: 'Platinum',
+  bronze:   'Basnot',
+  silver:   'Hjärtnot',
+  gold:     'Toppnot',
+  platinum: 'Signaturnäsa',
 }
 
 export function nextTier(tier: Tier): Tier | null {
