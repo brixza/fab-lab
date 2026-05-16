@@ -10,9 +10,10 @@ interface Props {
   customerId: string
   avatarUrl: string | null
   name: string
+  size?: number
 }
 
-export default function AvatarUpload({ userId, customerId, avatarUrl, name }: Props) {
+export default function AvatarUpload({ userId, customerId, avatarUrl, name, size = 52 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [preview, setPreview] = useState<string | null>(avatarUrl)
   const [cropFile, setCropFile] = useState<File | null>(null)
@@ -76,8 +77,8 @@ export default function AvatarUpload({ userId, customerId, avatarUrl, name }: Pr
         title="Change profile photo"
         style={{
           position: 'relative',
-          width: 52,
-          height: 52,
+          width: size,
+          height: size,
           background: 'none',
           border: 'none',
           padding: 0,
@@ -86,8 +87,8 @@ export default function AvatarUpload({ userId, customerId, avatarUrl, name }: Pr
         }}
       >
         <div style={{
-          width: 52,
-          height: 52,
+          width: size,
+          height: size,
           borderRadius: '50%',
           overflow: 'hidden',
           background: 'var(--color-primary)',
@@ -101,13 +102,13 @@ export default function AvatarUpload({ userId, customerId, avatarUrl, name }: Pr
             <Image
               src={preview}
               alt={name}
-              width={52}
-              height={52}
-              style={{ objectFit: 'cover', width: 52, height: 52 }}
+              width={size}
+              height={size}
+              style={{ objectFit: 'cover', width: size, height: size }}
               unoptimized={preview.startsWith('blob:')}
             />
           ) : (
-            <span style={{ fontSize: 16, color: '#fff', letterSpacing: '0.05em', fontFamily: 'Georgia, serif' }}>
+            <span style={{ fontSize: size * 0.3, color: '#fff', letterSpacing: '0.05em', fontFamily: 'Georgia, serif' }}>
               {initials}
             </span>
           )}

@@ -29,7 +29,7 @@
 }
 
 body {
-  background: var(--color-bg);
+  background: #fff;
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: 13px;
