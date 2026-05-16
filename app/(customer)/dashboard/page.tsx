@@ -121,8 +121,8 @@ export default async function DashboardPage() {
                 <div key={t} style={{ textAlign: 'right' }}>
                   <p style={{
                     fontFamily: 'var(--font-sans)',
-                    fontSize: 10,
-                    fontWeight: 600,
+                    fontSize: 14,
+                    fontWeight: 300,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
                     color: 'var(--color-primary)',
@@ -133,7 +133,8 @@ export default async function DashboardPage() {
                   </p>
                   <p style={{
                     fontFamily: 'var(--font-sans)',
-                    fontSize: 9,
+                    fontSize: 11,
+                    fontWeight: 300,
                     color: 'var(--color-text-muted)',
                     margin: 0,
                     letterSpacing: '0.04em',
@@ -171,13 +172,11 @@ export default async function DashboardPage() {
 
       {/* Min Doftgarderob header */}
       <div style={{
-        marginTop: 24,
         background: '#fff',
-        borderBottom: 'var(--border)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '16px 20px',
+        padding: '16px 20px 16px',
         overflow: 'hidden',
       }}>
         <h2 style={{
@@ -191,12 +190,12 @@ export default async function DashboardPage() {
         }}>
           Min doftgarderob
         </h2>
-        <div style={{ flexShrink: 0, marginRight: -12 }}>
+        <div style={{ flexShrink: 0, marginRight: -8, marginLeft: -16 }}>
           <Image
             src="/illustrations/bottles.png"
             alt=""
-            width={130}
-            height={72}
+            width={170}
+            height={94}
             style={{ objectFit: 'contain', display: 'block' }}
           />
         </div>
