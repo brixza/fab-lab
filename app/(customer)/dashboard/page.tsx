@@ -180,7 +180,7 @@ export default async function DashboardPage() {
       }}>
         <h2 style={{
           fontFamily: 'var(--font-sans)',
-          fontSize: 26,
+          fontSize: 18,
           fontWeight: 400,
           letterSpacing: '0.06em',
           textTransform: 'uppercase',
@@ -195,8 +195,8 @@ export default async function DashboardPage() {
           <Image
             src="/illustrations/bottles.png"
             alt=""
-            width={221}
-            height={122}
+            width={150}
+            height={83}
             style={{ objectFit: 'contain', display: 'block' }}
           />
         </div>
