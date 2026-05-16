@@ -85,7 +85,7 @@ export default async function DashboardPage() {
       {/* Tier visualization */}
       <div style={{
         background: '#fff',
-        padding: '8px 20px 12px',
+        padding: '3px 20px 12px',
         display: 'flex',
         alignItems: 'center',
       }}>
@@ -213,7 +213,7 @@ export default async function DashboardPage() {
           fontStyle: 'italic',
           color: 'var(--color-text-muted)',
           textAlign: 'center',
-          padding: '32px 28px 48px',
+          padding: '27px 28px 48px',
           lineHeight: 1.75,
           margin: 0,
         }}>
