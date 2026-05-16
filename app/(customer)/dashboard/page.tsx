@@ -68,8 +68,11 @@ export default async function DashboardPage() {
             }}>
               {firstName}
             </h1>
-            <p className="label" style={{ margin: 0, color: 'var(--color-primary)', opacity: 0.55 }}>
+            <p className="label" style={{ margin: '0 0 3px', color: 'var(--color-primary)', opacity: 0.55 }}>
               Nivå {TIER_LABELS[tier]}
+            </p>
+            <p style={{ margin: 0, fontSize: 12, fontFamily: 'var(--font-sans)', color: 'var(--color-points)', letterSpacing: '0.06em' }}>
+              {customer.points_balance.toLocaleString('sv-SE')} pts
             </p>
           </div>
         </div>
