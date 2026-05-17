@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
-import { TIER_LABELS, TIERS, TIER_THRESHOLDS } from '@/lib/tier'
+import { TIER_LABELS, TIERS, TIER_THRESHOLDS, tierProgress } from '@/lib/tier'
 import AvatarUpload from '@/components/AvatarUpload'
 import PurchaseList from './PurchaseList'
 import type { Customer, Purchase, PurchaseItem, Tier } from '@/types/database'
@@ -36,6 +36,13 @@ export default async function DashboardPage() {
   const firstName = customer.name.split(' ')[0].toUpperCase()
   const tierLadder = [...TIERS].reverse()
   const tierIndex = TIERS.indexOf(tier)
+
+  // Interpolate dot between current and next tier mark based on points progress
+  const { pct: tierPct } = tierProgress(customer.points_balance, tier)
+  const ladderIndex = TIERS.length - 1 - tierIndex // position in reversed ladder (0=top)
+  const currentTopPct = (ladderIndex / (TIERS.length - 1)) * 100
+  const nextTopPct = ladderIndex > 0 ? ((ladderIndex - 1) / (TIERS.length - 1)) * 100 : 0
+  const dotTopPct = currentTopPct - (currentTopPct - nextTopPct) * (tierPct / 100)
 
   return (
     <div style={{ background: '#fff', minHeight: '100%' }}>
@@ -150,24 +157,18 @@ export default async function DashboardPage() {
             })}
           </div>
 
-          {/* Vertical line + dot */}
+          {/* Vertical line + interpolated dot */}
           <div style={{ position: 'relative', width: 1, background: 'var(--color-border)' }}>
-            {tierLadder.map((t, i) => {
-              if (t !== tier) return null
-              const topPct = (i / (tierLadder.length - 1)) * 100
-              return (
-                <div key={t} style={{
-                  position: 'absolute',
-                  right: -5,
-                  top: `${topPct}%`,
-                  transform: 'translateY(-50%)',
-                  width: 11,
-                  height: 11,
-                  borderRadius: '50%',
-                  background: 'var(--color-primary)',
-                }} />
-              )
-            })}
+            <div style={{
+              position: 'absolute',
+              right: -5,
+              top: `${dotTopPct}%`,
+              transform: 'translateY(-50%)',
+              width: 11,
+              height: 11,
+              borderRadius: '50%',
+              background: 'var(--color-primary)',
+            }} />
           </div>
         </div>
       </div>
