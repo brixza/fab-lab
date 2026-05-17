@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { TIER_LABELS, TIERS, TIER_THRESHOLDS, tierProgress } from '@/lib/tier'
 import AvatarUpload from '@/components/AvatarUpload'
 import PurchaseList from './PurchaseList'
+import TierDot from './TierDot'
 import type { Customer, Purchase, PurchaseItem, Tier } from '@/types/database'
 
 export default async function DashboardPage() {
@@ -157,18 +158,9 @@ export default async function DashboardPage() {
             })}
           </div>
 
-          {/* Vertical line + interpolated dot */}
+          {/* Vertical line + animated dot */}
           <div style={{ position: 'relative', width: 1, background: 'var(--color-border)' }}>
-            <div style={{
-              position: 'absolute',
-              right: -5,
-              top: `${dotTopPct}%`,
-              transform: 'translateY(-50%)',
-              width: 11,
-              height: 11,
-              borderRadius: '50%',
-              background: 'var(--color-primary)',
-            }} />
+            <TierDot targetPct={dotTopPct} />
           </div>
         </div>
       </div>
