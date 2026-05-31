@@ -61,12 +61,12 @@ export default async function DashboardPage() {
       .select('*, purchase_items(*)')
       .eq('customer_id', customer.id)
       .order('created_at', { ascending: false })
-      .limit(10) as Promise<{ data: (Purchase & { purchase_items: PurchaseItem[] })[] | null }>,
+      .limit(10) as unknown as Promise<{ data: (Purchase & { purchase_items: PurchaseItem[] })[] | null }>,
     supabase
       .from('wishlists')
       .select('*')
       .eq('customer_id', customer.id)
-      .order('created_at', { ascending: false }) as Promise<{ data: WishlistItem[] | null }>,
+      .order('created_at', { ascending: false }) as unknown as Promise<{ data: WishlistItem[] | null }>,
   ])
 
   const tier = customer.tier as Tier
